@@ -1,7 +1,7 @@
 import React from 'react';
-import { Picker, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, Picker, StyleSheet, Text, TextInput, View } from 'react-native';
 import * as chart from './rpechart.json';
-//import Selector from './Selector.js';
+// import Selector from './Selector.js';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -30,14 +30,44 @@ export default class App extends React.Component {
   }
 
   handleChange = property => text => {
-    this.setState({ [property]: text }, () => {
+    // Make input only integers
+    text = text.replace(/[^0-9]/g, '');
+    text = parseInt(text);
+
+    // If not an int, make it 0
+    if (isNaN(text)) {
+      text = 0;
+    }
+
+    // Make it positive
+    if (text < 0) {
+      text = text * -1;
+    }
+
+    this.setState({ [property]: String(text) }, () => {
       this.setState({ outputWeight: this.calculateWeight() })
-    });  }
+    });
+  }
 
   handleSelection = (property, itemValue, itemIndex) => {
     this.setState({ [property]: itemValue }, () => {
       this.setState({ outputWeight: this.calculateWeight() })
     });
+  }
+
+  decreaseInputWeight = () => {
+    var newInputWeight = parseInt(this.state.inputWeight);
+    if (newInputWeight > 5) {
+      newInputWeight -= 5;
+    } else {
+      newInputWeight = 0;
+    }
+    this.setState({ inputWeight: String(newInputWeight) });
+  }
+
+  increaseInputWeight = () => {
+    var newInputWeight = parseInt(this.state.inputWeight) + 5;
+    this.setState({ inputWeight: String(newInputWeight) });
   }
 
   roundToNearestWeight = weight => {
@@ -53,69 +83,138 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={{ padding: 10 }}>
-        {/* <Selector /> */}
-          <Text style={{ padding: 10, fontSize: 24 }}>What was your last set?</Text>
-          <Picker
-            selectedValue={this.state.inputReps}
-            style={{ height: 50, width: 100 }}
-            onValueChange={(itemValue, itemIndex) => this.handleSelection('inputReps', itemValue, itemIndex)} >
-            {this.repValues.map((object, i) =>
-              <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
-            )}
-          </Picker>
+        <Text style={{ padding: 10, fontSize: 24 }}>What was your last set?</Text>
+        <View style={{
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+        }}>
+          {/* <Selector
+        options={this.repValues}
+        selected={this.state.inputReps}
+        onValueChange={(itemValue, itemIndex) => this.handleSelection('inputReps', itemValue, itemIndex)} /> */}
 
-          <Picker
-            selectedValue={this.state.inputRpe}
-            style={{ height: 50, width: 100 }}
-            onValueChange={(itemValue, itemIndex) => this.handleSelection('inputRpe', itemValue, itemIndex)} >
-            {this.rpeValues.map((object, i) =>
-              <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
-            )}
-          </Picker>
+          <View style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}>
+            <Text style={styles.label}>Reps</Text>
+            <Picker
+              selectedValue={this.state.inputReps}
+              style={styles.picker}
+              onValueChange={(itemValue, itemIndex) => this.handleSelection('inputReps', itemValue, itemIndex)} >
+              {this.repValues.map((object, i) =>
+                <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
+              )}
+            </Picker>
+          </View>
 
+          <View style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center'
+          }}>
+            <Text style={styles.label}>RPE</Text>
+            <Picker
+              selectedValue={this.state.inputRpe}
+              style={styles.picker}
+              onValueChange={(itemValue, itemIndex) => this.handleSelection('inputRpe', itemValue, itemIndex)} >
+              {this.rpeValues.map((object, i) =>
+                <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
+              )}
+            </Picker>
+          </View>
+        </View>
+
+        <View style={{
+          flexDirection: 'column',
+          justifyContent: 'center'
+        }}>
+          <Text style={{ padding: 10, fontSize: 24 }}>
+            Weight
+          </Text>
+          <Button
+            onPress={this.decreaseInputWeight}
+            title="-"
+          />
           <TextInput
-            style={{ height: 40 }}
-            placeholder="Weight"
-            label="Weight"
+            style={{ padding: 10, fontSize: 32, color: '#F18F01' }}
             value={this.state.inputWeight}
             keyboardType='numeric'
+            maxLength={3}
             onChangeText={this.handleChange('inputWeight')}
           />
-
-          <Text style={{ padding: 10, fontSize: 24 }}>Target weight for new number of reps and RPE</Text>
-          <Picker
-            selectedValue={this.state.outputReps}
-            style={{ height: 50, width: 100 }}
-            onValueChange={(itemValue, itemIndex) => this.handleSelection('outputReps', itemValue, itemIndex)} >
-            {this.repValues.map((object, i) =>
-              <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
-            )}
-          </Picker>
-
-          <Picker
-            selectedValue={this.state.outputRpe}
-            style={{ height: 50, width: 100 }}
-            onValueChange={(itemValue, itemIndex) => this.handleSelection('outputRpe', itemValue, itemIndex)} >
-            {this.rpeValues.map((object, i) =>
-              <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
-            )}
-          </Picker>
-
-          <Text style={{ padding: 10, fontSize: 18 }}>
-            Weight: {this.state.outputWeight}
-          </Text>
+          <Button
+            onPress={this.increaseInputWeight}
+            title="+"
+          />
         </View>
-      </View >
+
+        <Text style={{ padding: 10, fontSize: 24 }}>Next set reps and RPE</Text>
+
+        <View style={{
+          flexDirection: 'row',
+          justifyContent: 'space-evenly'
+        }}>
+
+          <View style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center'
+          }}>
+            <Text style={styles.label}>Reps</Text>
+            <Picker
+              selectedValue={this.state.outputReps}
+              style={styles.picker}
+              onValueChange={(itemValue, itemIndex) => this.handleSelection('outputReps', itemValue, itemIndex)} >
+              {this.repValues.map((object, i) =>
+                <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
+              )}
+            </Picker>
+          </View>
+
+          <View style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center'
+          }}>
+            <Text style={styles.label}>RPE</Text>
+            <Picker
+              selectedValue={this.state.outputRpe}
+              style={styles.picker}
+              onValueChange={(itemValue, itemIndex) => this.handleSelection('outputRpe', itemValue, itemIndex)} >
+              {this.rpeValues.map((object, i) =>
+                <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
+              )}
+            </Picker>
+          </View>
+        </View>
+
+        <Text style={{ padding: 10, fontSize: 24 }}>
+          Target weight
+          </Text>
+        <Text style={{ padding: 10, fontSize: 32, color: '#F18F01' }}>
+          {this.state.outputWeight}
+        </Text>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 50,
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
+  label: {
+    fontSize: 18,
+    color: '#006E90',
+    textAlign: 'center'
+  },
+  picker: {
+    color: '#F18F01',
+  }
 });
