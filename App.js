@@ -1,7 +1,9 @@
 import React from 'react';
-import { Button, Picker, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Keyboard, Picker, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import * as chart from './rpechart.json';
+import Button from 'react-native-button';
 // import Selector from './Selector.js';
+// import App from './App';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -56,18 +58,22 @@ export default class App extends React.Component {
   }
 
   decreaseInputWeight = () => {
-    var newInputWeight = parseInt(this.state.inputWeight);
-    if (newInputWeight > 5) {
-      newInputWeight -= 5;
+    var newInputWeight = parseInt(this.state.inputWeight) - 5;
+    if (newInputWeight > 0) {
+      newInputWeight = this.roundToNearestWeight(newInputWeight);
     } else {
       newInputWeight = 0;
     }
-    this.setState({ inputWeight: String(newInputWeight) });
+    this.setState({ inputWeight: String(newInputWeight) }, () => {
+      this.setState({ outputWeight: this.calculateWeight() })
+    });
   }
 
   increaseInputWeight = () => {
-    var newInputWeight = parseInt(this.state.inputWeight) + 5;
-    this.setState({ inputWeight: String(newInputWeight) });
+    var newInputWeight = this.roundToNearestWeight(parseInt(this.state.inputWeight) + 5);
+    this.setState({ inputWeight: String(newInputWeight) }, () => {
+      this.setState({ outputWeight: this.calculateWeight() })
+    });
   }
 
   roundToNearestWeight = weight => {
@@ -126,28 +132,36 @@ export default class App extends React.Component {
           </View>
         </View>
 
+        <Text style={styles.label}>Weight</Text>
+
         <View style={{
           flexDirection: 'column',
           justifyContent: 'center'
         }}>
-          <Text style={{ padding: 10, fontSize: 24 }}>
-            Weight
-          </Text>
-          <Button
-            onPress={this.decreaseInputWeight}
-            title="-"
-          />
-          <TextInput
-            style={{ padding: 10, fontSize: 32, color: '#F18F01' }}
-            value={this.state.inputWeight}
-            keyboardType='numeric'
-            maxLength={3}
-            onChangeText={this.handleChange('inputWeight')}
-          />
-          <Button
-            onPress={this.increaseInputWeight}
-            title="+"
-          />
+          <View style={{
+            flexDirection: 'row',
+            justifyContent: 'center'
+          }}>
+            <Button
+              onPress={this.decreaseInputWeight}
+              style={styles.weightButton}>
+              -
+            </Button>
+            <TextInput
+              style={styles.weightInput}
+              value={this.state.inputWeight}
+              keyboardType='numeric'
+              returnKeyType='done'
+              maxLength={3}
+              onChangeText={this.handleChange('inputWeight')}
+            />
+
+            <Button
+              onPress={this.increaseInputWeight}
+              style={styles.weightButton}>
+              +
+            </Button>
+          </View>
         </View>
 
         <Text style={{ padding: 10, fontSize: 24 }}>Next set reps and RPE</Text>
@@ -193,7 +207,7 @@ export default class App extends React.Component {
         <Text style={{ padding: 10, fontSize: 24 }}>
           Target weight
           </Text>
-        <Text style={{ padding: 10, fontSize: 32, color: '#F18F01' }}>
+        <Text style={{ padding: 10, fontSize: 40, fontWeight: 'bold', color: '#F18F01' }}>
           {this.state.outputWeight}
         </Text>
       </View>
@@ -203,9 +217,9 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 50,
+    paddingTop: 10,
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -216,5 +230,21 @@ const styles = StyleSheet.create({
   },
   picker: {
     color: '#F18F01',
+  },
+  items: {
+    color: 'red'
+  },
+  weightInput: {
+    padding: 10,
+    fontSize: 28,
+    color: '#F18F01',
+    width: 70
+  },
+  weightButton: {
+    height: 50,
+    width: 50,
+    color: '#ffffff',
+    backgroundColor: '#006E90',
+    paddingTop: 13
   }
 });
