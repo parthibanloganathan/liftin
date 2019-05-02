@@ -7,9 +7,12 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@shoutem/ui": "^0.23.20",
     "expo": "^32.0.0",
+    "expo-linear-gradient": "^4.0.0",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
+    "react-native-button": "^2.3.0",
     "react-native-wheel-scroll-picker": "^0.2.4"
   },
   "devDependencies": {
