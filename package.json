@@ -7,6 +7,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@shoutem/theme": "^0.11.3",
     "@shoutem/ui": "^0.23.20",
     "expo": "^32.0.0",
     "expo-linear-gradient": "^4.0.0",
