@@ -3,6 +3,7 @@ import { Picker, StyleSheet, Switch, TextInput } from 'react-native';
 import * as chart from './rpechart.json';
 import { AppLoading, Font, LinearGradient } from 'expo';
 import { Button, Divider, Heading, NavigationBar, Text, Title, View } from '@shoutem/ui';
+import { Surface } from 'react-native-paper';
 // import Selector from './Selector.js';
 // import App from './App';
 
@@ -132,7 +133,7 @@ export default class App extends React.Component {
     }
 
     return (
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
 
         <LinearGradient
           colors={['#EB3349', '#F45C43']}
@@ -141,13 +142,13 @@ export default class App extends React.Component {
           <View style={{ flex: 1, alignItems: 'center', paddingTop: 60 }}>
 
             <View styleName="md-gutter horizontal">
-              <Text styleName="v-center" style={{color: '#FFFFFF'}}>lbs</Text>
+              <Text styleName="v-center" style={{ color: '#FFFFFF' }}>lbs</Text>
               <Switch
                 onValueChange={this.toggleUnit}
                 value={usingKg}
                 thumbColor="#FFFFFF"
               />
-              <Text styleName="v-center" style={{color: '#FFFFFF'}}>kg</Text>
+              <Text styleName="v-center" style={{ color: '#FFFFFF' }}>kg</Text>
             </View>
 
             <Heading>What was your last set?</Heading>
@@ -221,7 +222,7 @@ export default class App extends React.Component {
               </View>
             </View>
 
-            <Divider styleName="line" style={{marginTop: 40, marginBottom: 40}} />
+            <Divider styleName="line" style={{ marginTop: 40, marginBottom: 40 }} />
 
             <Heading>Next set reps and RPE</Heading>
 
@@ -260,10 +261,18 @@ export default class App extends React.Component {
               </View>
             </View>
 
-            <Heading>Target weight</Heading>
-            <Text style={{ padding: 10, fontSize: 40, fontWeight: 'bold', color: '#FFF' }}>
-              {this.state.outputWeight}
-            </Text>
+            <Surface style={{
+                  padding: 20,
+                  borderRadius: 10,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  elevation: 4
+            }}>
+              <Heading>Target weight</Heading>
+              <Text style={{ padding: 10, fontSize: 40, fontWeight: 'bold', color: '#EB3349' }}>
+                {this.state.outputWeight}
+              </Text>
+            </Surface>
           </View>
         </LinearGradient>
       </View>
@@ -275,6 +284,12 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'center'
+  },
+  bottom: {
+    flex: 1,
+    height: 30,
+    justifyContent: 'flex-end',
+    backgroundColor: 'blue'
   },
   label: {
     fontSize: 18,
