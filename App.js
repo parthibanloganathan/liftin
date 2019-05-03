@@ -1,8 +1,8 @@
 import React from 'react';
-import { Picker, StyleSheet, Switch, TextInput, View } from 'react-native';
+import { Picker, StyleSheet, Switch, TextInput } from 'react-native';
 import * as chart from './rpechart.json';
 import { AppLoading, Font, LinearGradient } from 'expo';
-import { Button, Divider, Heading, NavigationBar, Text, Title } from '@shoutem/ui';
+import { Button, Divider, Heading, NavigationBar, Text, Title, View } from '@shoutem/ui';
 // import Selector from './Selector.js';
 // import App from './App';
 
@@ -132,150 +132,139 @@ export default class App extends React.Component {
     }
 
     return (
-      <View style={styles.container}>
-        <NavigationBar
-          centerComponent={<Title>Liftr</Title>}
-        />
+      <View style={{flex: 1}}>
+
         <LinearGradient
           colors={['#EB3349', '#F45C43']}
-          style={{ flex: 1, padding: 15, alignItems: 'center', borderRadius: 5 }}>
+          style={{ flex: 1, alignItems: 'center' }}>
 
-          <View style={{
-            flexDirection: 'row',
-            justifyContent: 'space-evenly',
-          }}>
-            <Text>lbs</Text>
-            <Switch
-              onValueChange={this.toggleUnit}
-              value={usingKg}
-              thumbColor="#FFFFFF"
-            />
-            <Text>kg</Text>
-          </View>
+          <View style={{ flex: 1, alignItems: 'center', paddingTop: 60 }}>
 
-          <Heading>What was your last set?</Heading>
-          <View style={{
-            flexDirection: 'row',
-            justifyContent: 'space-evenly',
-          }}>
-            {/* <Selector
+            <View styleName="md-gutter horizontal">
+              <Text styleName="v-center" style={{color: '#FFFFFF'}}>lbs</Text>
+              <Switch
+                onValueChange={this.toggleUnit}
+                value={usingKg}
+                thumbColor="#FFFFFF"
+              />
+              <Text styleName="v-center" style={{color: '#FFFFFF'}}>kg</Text>
+            </View>
+
+            <Heading>What was your last set?</Heading>
+            <View styleName="horizontal md-gutter">
+              {/* <Selector
         options={this.repValues}
         selected={this.state.inputReps}
         onValueChange={(itemValue, itemIndex) => this.handleSelection('inputReps', itemValue, itemIndex)} /> */}
 
-            <View style={{
-              flex: 1,
-              flexDirection: 'column',
-              justifyContent: 'center',
-            }}>
-              <Text style={styles.label}>Reps</Text>
-              <Picker
-                selectedValue={this.state.inputReps}
-                style={styles.picker}
-                onValueChange={(itemValue, itemIndex) => this.handleSelection('inputReps', itemValue, itemIndex)} >
-                {this.repValues.map((object, i) =>
-                  <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
-                )}
-              </Picker>
+              <View style={{
+                flex: 1,
+                flexDirection: 'column',
+                justifyContent: 'center',
+              }}>
+                <Text style={styles.label}>Reps</Text>
+                <Picker
+                  selectedValue={this.state.inputReps}
+                  style={styles.picker}
+                  onValueChange={(itemValue, itemIndex) => this.handleSelection('inputReps', itemValue, itemIndex)} >
+                  {this.repValues.map((object, i) =>
+                    <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
+                  )}
+                </Picker>
+              </View>
+
+              <View style={{
+                flex: 1,
+                flexDirection: 'column',
+                justifyContent: 'center'
+              }}>
+                <Text style={styles.label}>RPE</Text>
+                <Picker
+                  selectedValue={this.state.inputRpe}
+                  style={styles.picker}
+                  onValueChange={(itemValue, itemIndex) => this.handleSelection('inputRpe', itemValue, itemIndex)} >
+                  {this.rpeValues.map((object, i) =>
+                    <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
+                  )}
+                </Picker>
+              </View>
             </View>
 
+            <Text style={styles.label}>Weight</Text>
+
             <View style={{
-              flex: 1,
               flexDirection: 'column',
               justifyContent: 'center'
             }}>
-              <Text style={styles.label}>RPE</Text>
-              <Picker
-                selectedValue={this.state.inputRpe}
-                style={styles.picker}
-                onValueChange={(itemValue, itemIndex) => this.handleSelection('inputRpe', itemValue, itemIndex)} >
-                {this.rpeValues.map((object, i) =>
-                  <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
-                )}
-              </Picker>
+              <View style={styles.row}>
+                <Button
+                  onPress={this.decreaseInputWeight}
+                  styleName="action"
+                  style={styles.weightButton}>
+                  <Text>-</Text>
+                </Button>
+                <TextInput
+                  style={styles.weightInput}
+                  value={this.state.inputWeight}
+                  keyboardType='numeric'
+                  returnKeyType='done'
+                  maxLength={7}
+                  onChangeText={this.handleChange('inputWeight')}
+                />
+
+                <Button
+                  onPress={this.increaseInputWeight}
+                  styleName="action"
+                  style={styles.weightButton}>
+                  <Text>+</Text>
+                </Button>
+              </View>
             </View>
+
+            <Divider styleName="line" style={{marginTop: 40, marginBottom: 40}} />
+
+            <Heading>Next set reps and RPE</Heading>
+
+            <View styleName="horizontal md-gutter">
+
+              <View style={{
+                flex: 1,
+                flexDirection: 'column',
+                justifyContent: 'center'
+              }}>
+                <Text style={styles.label}>Reps</Text>
+                <Picker
+                  selectedValue={this.state.outputReps}
+                  style={styles.picker}
+                  onValueChange={(itemValue, itemIndex) => this.handleSelection('outputReps', itemValue, itemIndex)} >
+                  {this.repValues.map((object, i) =>
+                    <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
+                  )}
+                </Picker>
+              </View>
+
+              <View style={{
+                flex: 1,
+                flexDirection: 'column',
+                justifyContent: 'center'
+              }}>
+                <Text style={styles.label}>RPE</Text>
+                <Picker
+                  selectedValue={this.state.outputRpe}
+                  style={styles.picker}
+                  onValueChange={(itemValue, itemIndex) => this.handleSelection('outputRpe', itemValue, itemIndex)} >
+                  {this.rpeValues.map((object, i) =>
+                    <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
+                  )}
+                </Picker>
+              </View>
+            </View>
+
+            <Heading>Target weight</Heading>
+            <Text style={{ padding: 10, fontSize: 40, fontWeight: 'bold', color: '#FFF' }}>
+              {this.state.outputWeight}
+            </Text>
           </View>
-
-          <Text style={styles.label}>Weight</Text>
-
-          <View style={{
-            flexDirection: 'column',
-            justifyContent: 'center'
-          }}>
-            <View style={{
-              flexDirection: 'row',
-              justifyContent: 'center'
-            }}>
-              <Button
-                onPress={this.decreaseInputWeight}
-                styleName="action"
-                style={styles.weightButton}>
-                <Text>-</Text>
-              </Button>
-              <TextInput
-                style={styles.weightInput}
-                value={this.state.inputWeight}
-                keyboardType='numeric'
-                returnKeyType='done'
-                maxLength={7}
-                onChangeText={this.handleChange('inputWeight')}
-              />
-
-              <Button
-                onPress={this.increaseInputWeight}
-                styleName="action"
-                style={styles.weightButton}>
-                <Text>+</Text>
-              </Button>
-            </View>
-          </View>
-
-          <Divider styleName="line" />
-
-          <Heading>Next set reps and RPE</Heading>
-
-          <View style={{
-            flexDirection: 'row',
-            justifyContent: 'space-evenly'
-          }}>
-
-            <View style={{
-              flex: 1,
-              flexDirection: 'column',
-              justifyContent: 'center'
-            }}>
-              <Text style={styles.label}>Reps</Text>
-              <Picker
-                selectedValue={this.state.outputReps}
-                style={styles.picker}
-                onValueChange={(itemValue, itemIndex) => this.handleSelection('outputReps', itemValue, itemIndex)} >
-                {this.repValues.map((object, i) =>
-                  <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
-                )}
-              </Picker>
-            </View>
-
-            <View style={{
-              flex: 1,
-              flexDirection: 'column',
-              justifyContent: 'center'
-            }}>
-              <Text style={styles.label}>RPE</Text>
-              <Picker
-                selectedValue={this.state.outputRpe}
-                style={styles.picker}
-                onValueChange={(itemValue, itemIndex) => this.handleSelection('outputRpe', itemValue, itemIndex)} >
-                {this.rpeValues.map((object, i) =>
-                  <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
-                )}
-              </Picker>
-            </View>
-          </View>
-
-          <Heading>Target weight</Heading>
-          <Text style={{ padding: 10, fontSize: 40, fontWeight: 'bold', color: '#FFF' }}>
-            {this.state.outputWeight}
-          </Text>
         </LinearGradient>
       </View>
     );
@@ -283,10 +272,8 @@ export default class App extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 100,
-    flex: 1,
-    alignItems: 'center',
+  row: {
+    flexDirection: 'row',
     justifyContent: 'center'
   },
   label: {
