@@ -1,41 +1,56 @@
 import React from 'react';
-import { Picker, StyleSheet, Switch, TextInput } from 'react-native';
+import { AsyncStorage, StyleSheet, Switch, TextInput } from 'react-native';
 import * as chart from './rpechart.json';
 import { AppLoading, Font, LinearGradient } from 'expo';
-import { Button, Divider, Heading, NavigationBar, Text, Title, View } from '@shoutem/ui';
+import { Button, Divider, DropDownMenu, Heading, Text, View } from '@shoutem/ui';
 import { Surface } from 'react-native-paper';
-// import Selector from './Selector.js';
-// import App from './App';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
+    this.repValues = [];
+    this.rpeValues = [];
+
+    for (let rep = 1; rep <= 12; rep++) {
+      this.repValues.push({
+        "index": this.repValues.length,
+        "value": String(rep)
+      });
+    }
+
+    for (let rpe = 6.5; rpe <= 10; rpe += 0.5) {
+      this.rpeValues.push({
+        "index": this.rpeValues.length,
+        "value": String(rpe)
+      });
+    }
+
     this.state = {
-      inputReps: '1',
-      inputRpe: '8',
+      inputReps: this.repValues[0],
+      inputRpe: this.rpeValues[7],
       inputWeight: '225',
-      outputReps: '5',
-      outputRpe: '7',
+      outputReps: this.repValues[4],
+      outputRpe: this.rpeValues[3],
       outputWeight: '0',
       fontsAreLoaded: false,
       usingKg: false,
       weightIncrement: 5
     };
 
-    this.repValues = [];
-    this.rpeValues = [];
-
-    for (let rep = 1; rep <= 12; rep++) {
-      this.repValues.push(String(rep));
-    }
-
-    for (let rpe = 6.5; rpe <= 10; rpe += 0.5) {
-      this.rpeValues.push(String(rpe));
-    }
-
     this.state.outputWeight = this.calculateWeight();
   }
 
+  _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('usingKg');
+      if (value !== null) {
+        this.setState({ usingKg: value });
+      }
+    } catch (error) {
+      // Error retrieving data
+    }
+  };
+  
   async componentWillMount() {
     await Font.loadAsync({
       'Rubik-Black': require('./node_modules/@shoutem/ui/fonts/Rubik-Black.ttf'),
@@ -78,8 +93,8 @@ export default class App extends React.Component {
     });
   }
 
-  handleSelection = (property, itemValue, itemIndex) => {
-    this.setState({ [property]: itemValue }, () => {
+  handleDropDownSelection = (property, item) => {
+    this.setState({ [property]: item }, () => {
       this.setState({ outputWeight: this.calculateWeight() })
     });
   }
@@ -109,7 +124,7 @@ export default class App extends React.Component {
 
   calculateWeight = () => {
     return this.roundToNearestWeight(
-      parseInt(this.state.inputWeight) * chart[this.state.outputRpe][this.state.outputReps] / chart[this.state.inputRpe][this.state.inputReps]
+      parseInt(this.state.inputWeight) * chart[this.state.outputRpe.value][this.state.outputReps.value] / chart[this.state.inputRpe.value][this.state.inputReps.value]
     );
   }
 
@@ -123,6 +138,15 @@ export default class App extends React.Component {
     this.setState({ usingKg: value, weightIncrement: incrementValue, inputWeight: defaultWeight }, () => {
       this.setState({ outputWeight: this.calculateWeight() })
     });
+
+    _storeData = async () => {
+      try {
+        await AsyncStorage.setItem('usingKg', value);
+      } catch (error) {
+        // Error saving data
+      }
+    };
+    
   }
 
   render() {
@@ -151,12 +175,10 @@ export default class App extends React.Component {
               <Text styleName="v-center" style={{ color: '#FFFFFF' }}>kg</Text>
             </View>
 
+            <Divider styleName="line" style={{ marginTop: 20, marginBottom: 40 }} />
+
             <Heading>What was your last set?</Heading>
             <View styleName="horizontal md-gutter">
-              {/* <Selector
-        options={this.repValues}
-        selected={this.state.inputReps}
-        onValueChange={(itemValue, itemIndex) => this.handleSelection('inputReps', itemValue, itemIndex)} /> */}
 
               <View style={{
                 flex: 1,
@@ -164,14 +186,20 @@ export default class App extends React.Component {
                 justifyContent: 'center',
               }}>
                 <Text style={styles.label}>Reps</Text>
-                <Picker
-                  selectedValue={this.state.inputReps}
-                  style={styles.picker}
-                  onValueChange={(itemValue, itemIndex) => this.handleSelection('inputReps', itemValue, itemIndex)} >
-                  {this.repValues.map((object, i) =>
-                    <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
-                  )}
-                </Picker>
+                <DropDownMenu
+                  options={this.repValues}
+                  selectedOption={this.state.inputReps}
+                  onOptionSelected={(item) => this.handleDropDownSelection('inputReps', item)}
+                  titleProperty="value"
+                  valueProperty="index"
+                  style={{
+                    selectedOption: {
+                      backgroundColor: 'white',
+                      borderRadius: 5,
+                      margin: 10
+                    }
+                  }}
+                />
               </View>
 
               <View style={{
@@ -180,14 +208,20 @@ export default class App extends React.Component {
                 justifyContent: 'center'
               }}>
                 <Text style={styles.label}>RPE</Text>
-                <Picker
-                  selectedValue={this.state.inputRpe}
-                  style={styles.picker}
-                  onValueChange={(itemValue, itemIndex) => this.handleSelection('inputRpe', itemValue, itemIndex)} >
-                  {this.rpeValues.map((object, i) =>
-                    <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
-                  )}
-                </Picker>
+                <DropDownMenu
+                  options={this.rpeValues}
+                  selectedOption={this.state.inputRpe}
+                  onOptionSelected={(item) => this.handleDropDownSelection('inputRpe', item)}
+                  titleProperty="value"
+                  valueProperty="index"
+                  style={{
+                    selectedOption: {
+                      backgroundColor: 'white',
+                      borderRadius: 5,
+                      margin: 10
+                    }
+                  }}
+                />
               </View>
             </View>
 
@@ -200,9 +234,8 @@ export default class App extends React.Component {
               <View style={styles.row}>
                 <Button
                   onPress={this.decreaseInputWeight}
-                  styleName="action"
                   style={styles.weightButton}>
-                  <Text>-</Text>
+                  <Text style={{ fontSize: 20 }}>-</Text>
                 </Button>
                 <TextInput
                   style={styles.weightInput}
@@ -212,19 +245,17 @@ export default class App extends React.Component {
                   maxLength={7}
                   onChangeText={this.handleChange('inputWeight')}
                 />
-
                 <Button
                   onPress={this.increaseInputWeight}
-                  styleName="action"
                   style={styles.weightButton}>
-                  <Text>+</Text>
+                  <Text style={{ fontSize: 20 }}>+</Text>
                 </Button>
               </View>
             </View>
 
             <Divider styleName="line" style={{ marginTop: 40, marginBottom: 40 }} />
 
-            <Heading>Next set reps and RPE</Heading>
+            <Heading>Next set</Heading>
 
             <View styleName="horizontal md-gutter">
 
@@ -234,14 +265,20 @@ export default class App extends React.Component {
                 justifyContent: 'center'
               }}>
                 <Text style={styles.label}>Reps</Text>
-                <Picker
-                  selectedValue={this.state.outputReps}
-                  style={styles.picker}
-                  onValueChange={(itemValue, itemIndex) => this.handleSelection('outputReps', itemValue, itemIndex)} >
-                  {this.repValues.map((object, i) =>
-                    <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
-                  )}
-                </Picker>
+                <DropDownMenu
+                  options={this.repValues}
+                  selectedOption={this.state.outputReps}
+                  onOptionSelected={(item) => this.handleDropDownSelection('outputReps', item)}
+                  titleProperty="value"
+                  valueProperty="index"
+                  style={{
+                    selectedOption: {
+                      backgroundColor: 'white',
+                      borderRadius: 5,
+                      margin: 10
+                    }
+                  }}
+                />
               </View>
 
               <View style={{
@@ -250,23 +287,29 @@ export default class App extends React.Component {
                 justifyContent: 'center'
               }}>
                 <Text style={styles.label}>RPE</Text>
-                <Picker
-                  selectedValue={this.state.outputRpe}
-                  style={styles.picker}
-                  onValueChange={(itemValue, itemIndex) => this.handleSelection('outputRpe', itemValue, itemIndex)} >
-                  {this.rpeValues.map((object, i) =>
-                    <Picker.Item label={String(object)} value={String(object)} key={String(object)} />
-                  )}
-                </Picker>
+                <DropDownMenu
+                  options={this.rpeValues}
+                  selectedOption={this.state.outputRpe}
+                  onOptionSelected={(item) => this.handleDropDownSelection('outputRpe', item)}
+                  titleProperty="value"
+                  valueProperty="index"
+                  style={{
+                    selectedOption: {
+                      backgroundColor: 'white',
+                      borderRadius: 5,
+                      margin: 10
+                    }
+                  }}
+                />
               </View>
             </View>
 
             <Surface style={{
-                  padding: 20,
-                  borderRadius: 10,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  elevation: 4
+              padding: 20,
+              borderRadius: 10,
+              alignItems: 'center',
+              justifyContent: 'center',
+              elevation: 4
             }}>
               <Heading>Target weight</Heading>
               <Text style={{ padding: 10, fontSize: 40, fontWeight: 'bold', color: '#EB3349' }}>
@@ -283,7 +326,6 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
-    justifyContent: 'center'
   },
   bottom: {
     flex: 1,
@@ -303,9 +345,11 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 28,
     color: '#FFFFFF',
+    textAlign: 'center',
     width: 110
   },
   weightButton: {
-    width: 60
+    width: 60,
+    borderRadius: 5
   }
 });
