@@ -45,12 +45,26 @@ export default class App extends React.Component {
       outputReps: this.repValues[4],
       outputRpe: this.rpeValues[3],
       outputWeight: '0',
-      fontsAreLoaded: false,
+      loaded: false,
       usingKg: false,
       weightIncrement: LBS_INCREMENT
     };
 
     this.state.outputWeight = this.calculateWeight();
+  }
+
+  setUnit = async (usingKgValue) => {
+    var incrementValue = LBS_INCREMENT;
+    var defaultWeight = DEFAULT_INPUT_WEIGHT_LBS;
+
+    if (usingKgValue) {
+      incrementValue = KG_INCREMENT;
+      defaultWeight = DEFAULT_INPUT_WEIGHT_KG;
+    }
+
+    this.setState({ usingKg: usingKgValue, weightIncrement: incrementValue, inputWeight: String(defaultWeight) });
+    this.storeItem("usingKg", usingKgValue);
+    this.storeItem("inputWeight", defaultWeight);
   }
 
   async storeItem(key, value) {
@@ -112,9 +126,9 @@ export default class App extends React.Component {
       'rubicon-icon-font': require('./node_modules/@shoutem/ui/fonts/rubicon-icon-font.ttf'),
     });
 
-    this.setState({ fontsAreLoaded: true });
-
     this.retrieveState();
+
+    this.setState({ loaded: true });
   }
 
   handleChange = property => text => {
@@ -126,7 +140,7 @@ export default class App extends React.Component {
       text = parseFloat(text);
     }
 
-    // If not an int, make it 0
+    // If not a number, make it 0
     if (isNaN(text)) {
       text = 0;
     }
@@ -158,7 +172,7 @@ export default class App extends React.Component {
     }
     this.setState({ inputWeight: String(newInputWeight) }, () => {
       this.setState({ outputWeight: this.calculateWeight() });
-      this.storeItem("inputWeight", String(newInputWeight));
+      this.storeItem("inputWeight", newInputWeight);
     });
   }
 
@@ -166,7 +180,7 @@ export default class App extends React.Component {
     var newInputWeight = this.roundToNearestWeight(parseFloat(this.state.inputWeight) + this.state.weightIncrement);
     this.setState({ inputWeight: String(newInputWeight) }, () => {
       this.setState({ outputWeight: this.calculateWeight() });
-      this.storeItem("inputWeight", String(newInputWeight));
+      this.storeItem("inputWeight", newInputWeight);
     });
   }
 
@@ -180,22 +194,10 @@ export default class App extends React.Component {
     );
   }
 
-  setUnit = async (usingKgValue) => {
-    var incrementValue = LBS_INCREMENT;
-    var defaultWeight = String(DEFAULT_INPUT_WEIGHT_LBS);
-
-    if (usingKgValue) {
-      incrementValue = KG_INCREMENT;
-      defaultWeight = String(DEFAULT_INPUT_WEIGHT_KG);
-    }
-
-    this.setState({ usingKg: usingKgValue, weightIncrement: incrementValue, inputWeight: defaultWeight })
-  }
-
   toggleUnit = value => {
-    setUnit(value).then(() => {
+    this.setUnit(value).then(() => {
       this.setState({ outputWeight: this.calculateWeight() });
-      this.storeItem('usingKg', value);
+      this.setUnit(value);
     });
   }
 
