@@ -1,9 +1,22 @@
 import React from 'react';
-import { AsyncStorage, StyleSheet, Switch, TextInput } from 'react-native';
+import { AsyncStorage, Platform, ScrollView, StatusBar, StyleSheet, Switch, TextInput } from 'react-native';
 import * as chart from './rpechart.json';
 import { AppLoading, Font, LinearGradient } from 'expo';
 import { Button, Divider, DropDownMenu, Heading, Text, View } from '@shoutem/ui';
 import { Surface } from 'react-native-paper';
+
+const LBS_INCREMENT = 5;
+const KG_INCREMENT = 2.5;
+
+const START_RPE = 6.5;
+const END_RPE = 10;
+const RPE_INCREMENT = 0.5;
+
+const START_REP = 1;
+const END_REP = 12;
+
+const DEFAULT_INPUT_WEIGHT_LBS = 225;
+const DEFAULT_INPUT_WEIGHT_KG = 100;
 
 export default class App extends React.Component {
   constructor(props) {
@@ -11,14 +24,14 @@ export default class App extends React.Component {
     this.repValues = [];
     this.rpeValues = [];
 
-    for (let rep = 1; rep <= 12; rep++) {
+    for (let rep = START_REP; rep <= END_REP; rep++) {
       this.repValues.push({
         "index": this.repValues.length,
         "value": String(rep)
       });
     }
 
-    for (let rpe = 6.5; rpe <= 10; rpe += 0.5) {
+    for (let rpe = START_RPE; rpe <= END_RPE; rpe += RPE_INCREMENT) {
       this.rpeValues.push({
         "index": this.rpeValues.length,
         "value": String(rpe)
@@ -28,29 +41,62 @@ export default class App extends React.Component {
     this.state = {
       inputReps: this.repValues[0],
       inputRpe: this.rpeValues[7],
-      inputWeight: '225',
+      inputWeight: String(DEFAULT_INPUT_WEIGHT_LBS),
       outputReps: this.repValues[4],
       outputRpe: this.rpeValues[3],
       outputWeight: '0',
       fontsAreLoaded: false,
       usingKg: false,
-      weightIncrement: 5
+      weightIncrement: LBS_INCREMENT
     };
 
     this.state.outputWeight = this.calculateWeight();
   }
 
-  _retrieveData = async () => {
+  async storeItem(key, value) {
     try {
-      const value = await AsyncStorage.getItem('usingKg');
-      if (value !== null) {
-        this.setState({ usingKg: value });
-      }
+      await AsyncStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
-      // Error retrieving data
+      console.log(error);
     }
   };
-  
+
+  async retrieveState() {
+    try {
+      const value = await AsyncStorage.getItem('usingKg');
+      const inputRepsIndex = await AsyncStorage.getItem('inputRepsIndex');
+      const inputRpeIndex = await AsyncStorage.getItem('inputRpeIndex');
+      const inputWeight = await AsyncStorage.getItem('inputWeight'); 
+      const outputRepsIndex = await AsyncStorage.getItem('outputRepsIndex');
+      const outputRpeIndex = await AsyncStorage.getItem('outputRpeIndex');   
+
+      if (value === "true") {
+        this.setUnit(true);
+      } else {
+        this.setUnit(false);
+      }
+
+      if (inputRepsIndex !== null) {
+        this.setState({ inputReps: this.repValues[parseInt(inputRepsIndex)]});
+      }
+      if (inputRpeIndex !== null) {
+        this.setState({ inputRpe: this.rpeValues[parseInt(inputRpeIndex)]});
+      }
+      if (inputWeight !== null) {
+        this.setState({ inputWeight: inputWeight });
+      }
+      if (outputRepsIndex !== null) {
+        this.setState({ outputReps: this.repValues[parseInt(outputRepsIndex)]});
+      }
+      if (outputRpeIndex !== null) {
+        this.setState({ outputRpe: this.rpeValues[parseInt(outputRpeIndex)]});
+      }
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   async componentWillMount() {
     await Font.loadAsync({
       'Rubik-Black': require('./node_modules/@shoutem/ui/fonts/Rubik-Black.ttf'),
@@ -67,6 +113,8 @@ export default class App extends React.Component {
     });
 
     this.setState({ fontsAreLoaded: true });
+
+    this.retrieveState();
   }
 
   handleChange = property => text => {
@@ -89,13 +137,15 @@ export default class App extends React.Component {
     }
 
     this.setState({ [property]: String(text) }, () => {
-      this.setState({ outputWeight: this.calculateWeight() })
+      this.setState({ outputWeight: this.calculateWeight() });
+      this.storeItem(property, text);
     });
   }
 
   handleDropDownSelection = (property, item) => {
     this.setState({ [property]: item }, () => {
-      this.setState({ outputWeight: this.calculateWeight() })
+      this.setState({ outputWeight: this.calculateWeight() });
+      this.storeItem([property] + "Index", item.index);
     });
   }
 
@@ -107,14 +157,16 @@ export default class App extends React.Component {
       newInputWeight = 0;
     }
     this.setState({ inputWeight: String(newInputWeight) }, () => {
-      this.setState({ outputWeight: this.calculateWeight() })
+      this.setState({ outputWeight: this.calculateWeight() });
+      this.storeItem("inputWeight", String(newInputWeight));
     });
   }
 
   increaseInputWeight = () => {
     var newInputWeight = this.roundToNearestWeight(parseFloat(this.state.inputWeight) + this.state.weightIncrement);
     this.setState({ inputWeight: String(newInputWeight) }, () => {
-      this.setState({ outputWeight: this.calculateWeight() })
+      this.setState({ outputWeight: this.calculateWeight() });
+      this.storeItem("inputWeight", String(newInputWeight));
     });
   }
 
@@ -128,25 +180,23 @@ export default class App extends React.Component {
     );
   }
 
-  toggleUnit = value => {
-    var incrementValue = 5;
-    var defaultWeight = '225';
-    if (value === true) {
-      incrementValue = 1.25;
-      defaultWeight = '100';
-    }
-    this.setState({ usingKg: value, weightIncrement: incrementValue, inputWeight: defaultWeight }, () => {
-      this.setState({ outputWeight: this.calculateWeight() })
-    });
+  setUnit = async (usingKgValue) => {
+    var incrementValue = LBS_INCREMENT;
+    var defaultWeight = String(DEFAULT_INPUT_WEIGHT_LBS);
 
-    _storeData = async () => {
-      try {
-        await AsyncStorage.setItem('usingKg', value);
-      } catch (error) {
-        // Error saving data
-      }
-    };
-    
+    if (usingKgValue) {
+      incrementValue = KG_INCREMENT;
+      defaultWeight = String(DEFAULT_INPUT_WEIGHT_KG);
+    }
+
+    this.setState({ usingKg: usingKgValue, weightIncrement: incrementValue, inputWeight: defaultWeight })
+  }
+
+  toggleUnit = value => {
+    setUnit(value).then(() => {
+      this.setState({ outputWeight: this.calculateWeight() });
+      this.storeItem('usingKg', value);
+    });
   }
 
   render() {
@@ -157,13 +207,15 @@ export default class App extends React.Component {
     }
 
     return (
-      <View style={{ flex: 1 }}>
+      <ScrollView style={{ paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight }}
+        contentContainerStyle={{ flexGrow: 1 }}>
 
         <LinearGradient
           colors={['#EB3349', '#F45C43']}
           style={{ flex: 1, alignItems: 'center' }}>
 
-          <View style={{ flex: 1, alignItems: 'center', paddingTop: 60 }}>
+          {/* See https://medium.com/@peterpme/taming-react-natives-scrollview-with-flex-144e6ff76c08 */}
+          <View style={{ flex: 1, justifyContent: 'space-between', alignItems: 'center' }}>
 
             <View styleName="md-gutter horizontal">
               <Text styleName="v-center" style={{ color: '#FFFFFF' }}>lbs</Text>
@@ -171,11 +223,16 @@ export default class App extends React.Component {
                 onValueChange={this.toggleUnit}
                 value={usingKg}
                 thumbColor="#FFFFFF"
+                style={{
+                  marginLeft: 20,
+                  marginRight: 20,
+                  marginTop: 10
+                }}
               />
               <Text styleName="v-center" style={{ color: '#FFFFFF' }}>kg</Text>
             </View>
 
-            <Divider styleName="line" style={{ marginTop: 20, marginBottom: 40 }} />
+            <Divider styleName="line" style={{ marginBottom: 20 }} />
 
             <Heading>What was your last set?</Heading>
             <View styleName="horizontal md-gutter">
@@ -253,7 +310,7 @@ export default class App extends React.Component {
               </View>
             </View>
 
-            <Divider styleName="line" style={{ marginTop: 40, marginBottom: 40 }} />
+            <Divider styleName="line" style={{ marginTop: 20, marginBottom: 20 }} />
 
             <Heading>Next set</Heading>
 
@@ -309,7 +366,8 @@ export default class App extends React.Component {
               borderRadius: 10,
               alignItems: 'center',
               justifyContent: 'center',
-              elevation: 4
+              elevation: 4,
+              marginBottom: 40
             }}>
               <Heading>Target weight</Heading>
               <Text style={{ padding: 10, fontSize: 40, fontWeight: 'bold', color: '#EB3349' }}>
@@ -318,7 +376,7 @@ export default class App extends React.Component {
             </Surface>
           </View>
         </LinearGradient>
-      </View>
+      </ScrollView>
     );
   }
 }

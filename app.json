@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Liftr",
-    "slug": "liftr",
+    "name": "liftin",
+    "slug": "liftin",
     "privacy": "public",
     "sdkVersion": "32.0.0",
     "platforms": [
@@ -24,10 +24,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.parthi.liftr"
+      "bundleIdentifier": "com.parthi.liftin"
     },
     "android": {
-			"package": "com.parthi.liftr"
+			"package": "com.parthi.liftin"
 		}
   }
 }
