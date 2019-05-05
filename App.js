@@ -80,9 +80,9 @@ export default class App extends React.Component {
       const value = await AsyncStorage.getItem('usingKg');
       const inputRepsIndex = await AsyncStorage.getItem('inputRepsIndex');
       const inputRpeIndex = await AsyncStorage.getItem('inputRpeIndex');
-      const inputWeight = await AsyncStorage.getItem('inputWeight'); 
+      const inputWeight = await AsyncStorage.getItem('inputWeight');
       const outputRepsIndex = await AsyncStorage.getItem('outputRepsIndex');
-      const outputRpeIndex = await AsyncStorage.getItem('outputRpeIndex');   
+      const outputRpeIndex = await AsyncStorage.getItem('outputRpeIndex');
 
       if (value === "true") {
         this.setUnit(true);
@@ -91,21 +91,21 @@ export default class App extends React.Component {
       }
 
       if (inputRepsIndex !== null) {
-        this.setState({ inputReps: this.repValues[parseInt(inputRepsIndex)]});
+        this.setState({ inputReps: this.repValues[parseInt(inputRepsIndex)] });
       }
       if (inputRpeIndex !== null) {
-        this.setState({ inputRpe: this.rpeValues[parseInt(inputRpeIndex)]});
+        this.setState({ inputRpe: this.rpeValues[parseInt(inputRpeIndex)] });
       }
       if (inputWeight !== null) {
         this.setState({ inputWeight: inputWeight });
       }
       if (outputRepsIndex !== null) {
-        this.setState({ outputReps: this.repValues[parseInt(outputRepsIndex)]});
+        this.setState({ outputReps: this.repValues[parseInt(outputRepsIndex)] });
       }
       if (outputRpeIndex !== null) {
-        this.setState({ outputRpe: this.rpeValues[parseInt(outputRpeIndex)]});
+        this.setState({ outputRpe: this.rpeValues[parseInt(outputRpeIndex)] });
       }
-      
+
     } catch (error) {
       console.log(error);
     }
