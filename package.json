@@ -13,11 +13,11 @@
     "expo-linear-gradient": "^4.0.0",
     "react": "^16.8.6",
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
-    "react-native-paper": "^2.15.2",
-    "react-native-wheel-scroll-picker": "^0.2.4"
+    "react-native-paper": "^2.15.2"
   },
   "devDependencies": {
-    "babel-preset-expo": "^5.0.0"
+    "babel-preset-expo": "^5.0.0",
+    "schedule": "^0.4.0"
   },
   "private": true
 }
