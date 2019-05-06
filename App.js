@@ -1,5 +1,5 @@
 import React from 'react';
-import { AsyncStorage, Platform, ScrollView, StatusBar, StyleSheet, Switch, TextInput } from 'react-native';
+import { AsyncStorage, Platform, ScrollView, StyleSheet, Switch, TextInput } from 'react-native';
 import * as chart from './rpechart.json';
 import { AppLoading, Font, LinearGradient } from 'expo';
 import { Button, Divider, DropDownMenu, Heading, Text, View } from '@shoutem/ui';
@@ -39,11 +39,11 @@ export default class App extends React.Component {
     }
 
     this.state = {
-      inputReps: this.repValues[0],
-      inputRpe: this.rpeValues[7],
+      inputReps: this.repValues[4],
+      inputRpe: this.rpeValues[3],
       inputWeight: String(DEFAULT_INPUT_WEIGHT_LBS),
-      outputReps: this.repValues[4],
-      outputRpe: this.rpeValues[3],
+      outputReps: this.repValues[0],
+      outputRpe: this.rpeValues[5],
       outputWeight: '0',
       loaded: false,
       usingKg: false,
@@ -202,15 +202,19 @@ export default class App extends React.Component {
   }
 
   render() {
-    const { fontsAreLoaded, usingKg } = this.state;
+    const { loaded, usingKg } = this.state;
 
-    if (!fontsAreLoaded) {
+    var top_margin = 0;
+    if (Platform.OS === 'ios') {
+      top_margin = 25;
+    }
+
+    if (!loaded) {
       return <AppLoading />;
     }
 
     return (
-      <ScrollView style={{ paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight }}
-        contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 
         <LinearGradient
           colors={['#EB3349', '#F45C43']}
@@ -225,10 +229,11 @@ export default class App extends React.Component {
                 onValueChange={this.toggleUnit}
                 value={usingKg}
                 thumbColor="#FFFFFF"
+                trackColor={{ false: '#FFFFFF', true: '#48EB33' }}
                 style={{
                   marginLeft: 20,
                   marginRight: 20,
-                  marginTop: 10
+                  marginTop: top_margin
                 }}
               />
               <Text styleName="v-center" style={{ color: '#FFFFFF' }}>kg</Text>

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "liftin",
+    "name": "Liftin",
     "slug": "liftin",
     "privacy": "public",
     "sdkVersion": "32.0.0",
@@ -9,7 +9,7 @@
       "android"
     ],
     "version": "1.0.0",
-    "orientation": "portrait",
+    "primaryColor": "#EB3349",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
@@ -27,7 +27,15 @@
       "bundleIdentifier": "com.parthi.liftin"
     },
     "android": {
-			"package": "com.parthi.liftin"
-		}
+      "package": "com.parthi.liftin",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/foreground.png",
+        "backgroundImage": "./assets/background.png"
+      }
+    },
+    "androidStatusBar": {
+      "backgroundColor": "#C81429",
+      "barStyle": "light-content"
+    }
   }
 }
