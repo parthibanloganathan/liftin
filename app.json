@@ -8,7 +8,7 @@
       "ios",
       "android"
     ],
-    "version": "1.0.0",
+    "version": "1.0.1",
     "primaryColor": "#EB3349",
     "icon": "./assets/icon.png",
     "splash": {
@@ -31,7 +31,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/foreground.png",
         "backgroundImage": "./assets/background.png"
-      }
+      },
+      "permissions": []
     },
     "androidStatusBar": {
       "backgroundColor": "#C81429",
