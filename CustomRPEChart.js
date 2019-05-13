@@ -1,7 +1,7 @@
 import React from 'react';
-import { AsyncStorage, Platform, ScrollView, StyleSheet, Switch, TextInput } from 'react-native';
+import { AsyncStorage, ScrollView, StyleSheet, TextInput } from 'react-native';
 import * as chart from './rpechart.json';
-import { AppLoading, Font, LinearGradient } from 'expo';
+import { AppLoading, LinearGradient } from 'expo';
 import { Button, Divider, DropDownMenu, Heading, Text, View } from '@shoutem/ui';
 
 const START_RPE = 6.5;
@@ -62,22 +62,7 @@ class CustomRPEChart extends React.Component {
     };
 
     async componentWillMount() {
-        await Font.loadAsync({
-            'Rubik-Black': require('./node_modules/@shoutem/ui/fonts/Rubik-Black.ttf'),
-            'Rubik-BlackItalic': require('./node_modules/@shoutem/ui/fonts/Rubik-BlackItalic.ttf'),
-            'Rubik-Bold': require('./node_modules/@shoutem/ui/fonts/Rubik-Bold.ttf'),
-            'Rubik-BoldItalic': require('./node_modules/@shoutem/ui/fonts/Rubik-BoldItalic.ttf'),
-            'Rubik-Italic': require('./node_modules/@shoutem/ui/fonts/Rubik-Italic.ttf'),
-            'Rubik-Light': require('./node_modules/@shoutem/ui/fonts/Rubik-Light.ttf'),
-            'Rubik-LightItalic': require('./node_modules/@shoutem/ui/fonts/Rubik-LightItalic.ttf'),
-            'Rubik-Medium': require('./node_modules/@shoutem/ui/fonts/Rubik-Medium.ttf'),
-            'Rubik-MediumItalic': require('./node_modules/@shoutem/ui/fonts/Rubik-MediumItalic.ttf'),
-            'Rubik-Regular': require('./node_modules/@shoutem/ui/fonts/Rubik-Regular.ttf'),
-            'rubicon-icon-font': require('./node_modules/@shoutem/ui/fonts/rubicon-icon-font.ttf'),
-        });
-
         this.retrieveChart();
-
         this.setState({ loaded: true });
     }
 
@@ -130,39 +115,53 @@ class CustomRPEChart extends React.Component {
                     {/* See https://medium.com/@peterpme/taming-react-natives-scrollview-with-flex-144e6ff76c08 */}
                     <View style={{ flex: 1, justifyContent: 'space-between', alignItems: 'center' }}>
 
-                        <View styleName="horizontal md-gutter">
+                        <View styleName="horizontal">
                             <Button
-                                onPress={this.reset}>
-                                <Text>Reset</Text>
+                                styleName="md-gutter"
+                                onPress={this.save}>
+                                <Text>SAVE</Text>
                             </Button>
 
                             <Button
-                                onPress={this.save}>
-                                <Text>Save</Text>
+                                styleName="md-gutter"
+                                onPress={this.reset}>
+                                <Text>RESET</Text>
                             </Button>
                         </View>
-
-                        <Text style={styles.label}>Reps</Text>
-                        <DropDownMenu
-                            options={this.repValues}
-                            selectedOption={this.state.selectedRep}
-                            onOptionSelected={(item) => this.handleDropDownSelection(item)}
-                            titleProperty="value"
-                            valueProperty="index"
-                            style={{
-                                selectedOption: {
-                                    backgroundColor: 'white',
-                                    borderRadius: 5,
-                                    margin: 10
-                                }
-                            }}
-                        />
 
                         <View style={{
                             flex: 1,
                             flexDirection: 'column',
-                            justifyContent: 'space-evenly',
+                            justifyContent: 'center',
                         }}>
+
+                            <Text style={styles.label}>Reps</Text>
+                            <DropDownMenu
+                                options={this.repValues}
+                                selectedOption={this.state.selectedRep}
+                                onOptionSelected={(item) => this.handleDropDownSelection(item)}
+                                titleProperty="value"
+                                valueProperty="index"
+                                style={{
+                                    selectedOption: {
+                                        backgroundColor: 'white',
+                                        borderRadius: 5,
+                                        margin: 10
+                                    }
+                                }}
+                            />
+
+                            <View style={styles.row}>
+                                <Heading style={styles.rowLabel}>
+                                    RPE
+                                </Heading>
+                                <Heading style={styles.rowLabel}>
+                                    %
+                                </Heading>
+                            </View>
+
+                            <Divider styleName="line" style={{ marginTop: 10, marginBottom: 10 }} />
+
                             {
                                 this.rpeValues.map(rpe => {
                                     return (
@@ -195,18 +194,19 @@ const styles = StyleSheet.create({
     row: {
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'space-evenly',
         alignItems: 'stretch',
         margin: 5
     },
     label: {
         fontSize: 18,
         color: '#FFFFFF',
-        textAlign: 'center'
+        textAlign: 'center',
     },
     rowLabel: {
         color: '#FFFFFF',
-        marginRight: 20
+        textAlign: 'center',
+        paddingTop: 20,
+        width: 100
     },
     input: {
         backgroundColor: '#FFFFFF',

@@ -2,25 +2,21 @@ import { createSwitchNavigator, createStackNavigator, createAppContainer } from 
 import Calculator from './Calculator';
 import CustomRPEChart from './CustomRPEChart';
 import Loading from './Loading';
-
-const AppNavigator = createStackNavigator(
-  {
-    Calculator: Calculator,
-    RPEChart: CustomRPEChart
-  },
-  {
-    initialRouteName: "Calculator",
-    defaultNavigationOptions: {
-      headerStyle: {
-        backgroundColor: '#C81429',
-      }
-    }
-  }
-);
+import { Constants } from 'expo';
+import { Platform } from 'react-native';
 
 const AppStack = createStackNavigator({
   Calculator: Calculator,
   RPEChart: CustomRPEChart
+},
+{
+  defaultNavigationOptions: {
+    headerTintColor: '#FFFFFF',
+    headerStyle: {
+      backgroundColor: '#C81429',
+      // marginTop: (Platform.OS === 'ios') ? 0 : Constants.statusBarHeight
+    }
+  }
 });
 
 const SplashStack = createStackNavigator({ Splash: Loading });

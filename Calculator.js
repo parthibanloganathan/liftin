@@ -1,8 +1,8 @@
 import React from 'react';
-import { AsyncStorage, Platform, ScrollView, StyleSheet, Switch, Text, TextInput } from 'react-native';
+import { AsyncStorage, ScrollView, StyleSheet, Switch, TextInput } from 'react-native';
 import * as defaultChart from './rpechart.json';
-import { AppLoading, Font, LinearGradient } from 'expo';
-import { Button, Divider, DropDownMenu, Heading, Icon, View } from '@shoutem/ui';
+import { AppLoading, LinearGradient } from 'expo';
+import { Button, Divider, DropDownMenu, Heading, Icon, Text, View } from '@shoutem/ui';
 import { Surface } from 'react-native-paper';
 
 const LBS_INCREMENT = 5;
@@ -112,7 +112,6 @@ class Calculator extends React.Component {
         this.setState({ outputRpe: this.rpeValues[parseInt(outputRpeIndex)] });
       }
       if (storedChart !== null) {
-        console.log("loading chart into calc");
         this.setState({ chart: JSON.parse(storedChart) });
       }
 
@@ -122,22 +121,7 @@ class Calculator extends React.Component {
   };
 
   async componentWillMount() {
-    await Font.loadAsync({
-      'Rubik-Black': require('./node_modules/@shoutem/ui/fonts/Rubik-Black.ttf'),
-      'Rubik-BlackItalic': require('./node_modules/@shoutem/ui/fonts/Rubik-BlackItalic.ttf'),
-      'Rubik-Bold': require('./node_modules/@shoutem/ui/fonts/Rubik-Bold.ttf'),
-      'Rubik-BoldItalic': require('./node_modules/@shoutem/ui/fonts/Rubik-BoldItalic.ttf'),
-      'Rubik-Italic': require('./node_modules/@shoutem/ui/fonts/Rubik-Italic.ttf'),
-      'Rubik-Light': require('./node_modules/@shoutem/ui/fonts/Rubik-Light.ttf'),
-      'Rubik-LightItalic': require('./node_modules/@shoutem/ui/fonts/Rubik-LightItalic.ttf'),
-      'Rubik-Medium': require('./node_modules/@shoutem/ui/fonts/Rubik-Medium.ttf'),
-      'Rubik-MediumItalic': require('./node_modules/@shoutem/ui/fonts/Rubik-MediumItalic.ttf'),
-      'Rubik-Regular': require('./node_modules/@shoutem/ui/fonts/Rubik-Regular.ttf'),
-      'rubicon-icon-font': require('./node_modules/@shoutem/ui/fonts/rubicon-icon-font.ttf'),
-    });
-
     this.retrieveState();
-
     this.setState({ loaded: true });
   }
 
@@ -145,8 +129,14 @@ class Calculator extends React.Component {
     return {
       Title: "Home",
       headerRight: (
-        <Icon name="edit"
-          onPress={() => navigation.navigate('RPEChart')} />
+        <Button
+          styleName="clear md-gutter"
+          onPress={() => navigation.navigate('RPEChart')}>
+          <Icon
+            name="edit"
+            style={{ color: '#FFFFFF'}} />
+          <Text style={{color: '#FFFFFF'}}>CUSTOM</Text>
+        </Button>
       )
     }
   };
@@ -230,11 +220,6 @@ class Calculator extends React.Component {
   render() {
     const { loaded, usingKg } = this.state;
 
-    var top_margin = 0;
-    if (Platform.OS === 'ios') {
-      top_margin = 25;
-    }
-
     if (!loaded) {
       return <AppLoading />;
     }
@@ -249,10 +234,10 @@ class Calculator extends React.Component {
           {/* See https://medium.com/@peterpme/taming-react-natives-scrollview-with-flex-144e6ff76c08 */}
           <View style={{ flex: 1, justifyContent: 'space-between', alignItems: 'center' }}>
 
-            <Button
+            {/* <Button
               onPress={() => this.props.navigation.navigate('RPEChart')}>
               <Icon name="edit" />
-            </Button>
+            </Button> */}
 
             <View styleName="md-gutter horizontal">
               <Text styleName="v-center" style={{ color: '#FFFFFF' }}>lbs</Text>
@@ -263,8 +248,7 @@ class Calculator extends React.Component {
                 trackColor={{ false: '#FFFFFF', true: '#48EB33' }}
                 style={{
                   marginLeft: 20,
-                  marginRight: 20,
-                  marginTop: top_margin
+                  marginRight: 20
                 }}
               />
               <Text styleName="v-center" style={{ color: '#FFFFFF' }}>kg</Text>
