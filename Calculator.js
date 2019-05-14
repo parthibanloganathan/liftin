@@ -4,6 +4,7 @@ import * as defaultChart from './rpechart.json';
 import { AppLoading, LinearGradient } from 'expo';
 import { Button, Divider, DropDownMenu, Heading, Icon, Text, View } from '@shoutem/ui';
 import { Surface } from 'react-native-paper';
+import { NavigationEvents } from 'react-navigation';
 
 const LBS_INCREMENT = 5;
 const KG_INCREMENT = 2.5;
@@ -49,7 +50,8 @@ class Calculator extends React.Component {
       loaded: false,
       usingKg: false,
       weightIncrement: LBS_INCREMENT,
-      chart: defaultChart
+      chart: defaultChart,
+      usingCustomChart: false
     };
 
     delete this.state.chart.default;
@@ -89,6 +91,7 @@ class Calculator extends React.Component {
       const outputRepsIndex = await AsyncStorage.getItem('outputRepsIndex');
       const outputRpeIndex = await AsyncStorage.getItem('outputRpeIndex');
       const storedChart = await AsyncStorage.getItem('rpe_chart');
+      const isCustomChart = await AsyncStorage.getItem('is_custom_chart');
 
       if (value === "true") {
         this.setUnit(true);
@@ -114,6 +117,9 @@ class Calculator extends React.Component {
       if (storedChart !== null) {
         this.setState({ chart: JSON.parse(storedChart) });
       }
+      if (isCustomChart !== null) {
+        this.setState({ usingCustomChart: JSON.parse(isCustomChart) });
+      }
 
     } catch (error) {
       console.log(error);
@@ -131,11 +137,11 @@ class Calculator extends React.Component {
       headerRight: (
         <Button
           styleName="clear md-gutter"
-          onPress={() => navigation.navigate('RPEChart')}>
+          onPress={() => navigation.navigate('RPEChart', { callback: this.retrieveState })}>
           <Icon
             name="edit"
-            style={{ color: '#FFFFFF'}} />
-          <Text style={{color: '#FFFFFF'}}>CUSTOM</Text>
+            style={{ color: '#FFFFFF' }} />
+          <Text style={{ color: '#FFFFFF' }}>CUSTOM</Text>
         </Button>
       )
     }
@@ -227,17 +233,18 @@ class Calculator extends React.Component {
     return (
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 
+        <NavigationEvents
+          onWillFocus={() => {
+            this.retrieveState();
+          }}
+        />
+
         <LinearGradient
           colors={['#EB3349', '#F45C43']}
           style={{ flex: 1, alignItems: 'center' }}>
 
           {/* See https://medium.com/@peterpme/taming-react-natives-scrollview-with-flex-144e6ff76c08 */}
           <View style={{ flex: 1, justifyContent: 'space-between', alignItems: 'center' }}>
-
-            {/* <Button
-              onPress={() => this.props.navigation.navigate('RPEChart')}>
-              <Icon name="edit" />
-            </Button> */}
 
             <View styleName="md-gutter horizontal">
               <Text styleName="v-center" style={{ color: '#FFFFFF' }}>lbs</Text>
@@ -389,7 +396,7 @@ class Calculator extends React.Component {
               alignItems: 'center',
               justifyContent: 'center',
               elevation: 4,
-              marginBottom: 40
+              marginBottom: 10
             }}>
               <Heading>Target weight</Heading>
               <Text style={{ padding: 10, fontSize: 40, fontWeight: 'bold', color: '#EB3349' }}>
@@ -400,6 +407,7 @@ class Calculator extends React.Component {
                 {this.state.oneRepMax}
               </Text>
             </Surface>
+            {this.state.usingCustomChart ? <Text style={styles.note}>Using your custom chart. You can reset it in settings</Text> : <Text style={styles.note}>Using default RPE chart</Text>}
           </View>
         </LinearGradient>
       </ScrollView>
@@ -426,6 +434,10 @@ const styles = StyleSheet.create({
   weightButton: {
     width: 60,
     borderRadius: 5
+  },
+  note: {
+    color: '#FFFFFF',
+    marginBottom: 10
   }
 });
 

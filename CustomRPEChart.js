@@ -2,7 +2,7 @@ import React from 'react';
 import { AsyncStorage, ScrollView, StyleSheet, TextInput } from 'react-native';
 import * as chart from './rpechart.json';
 import { AppLoading, LinearGradient } from 'expo';
-import { Button, Divider, DropDownMenu, Heading, Text, View } from '@shoutem/ui';
+import { Button, Divider, DropDownMenu, Heading, Icon, Text, View } from '@shoutem/ui';
 
 const START_RPE = 6.5;
 const END_RPE = 10;
@@ -48,6 +48,14 @@ class CustomRPEChart extends React.Component {
         }
     };
 
+    async storeItem(key, value) {
+        try {
+            await AsyncStorage.setItem(key, JSON.stringify(value));
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     async retrieveChart() {
         try {
             const storedChart = await AsyncStorage.getItem('rpe_chart');
@@ -79,6 +87,7 @@ class CustomRPEChart extends React.Component {
     reset = () => {
         const resetChart = JSON.parse(JSON.stringify(chart));
         this.setState({ customChart: resetChart }, () => this.storeChart());
+        this.storeItem('is_custom_chart', false);
     }
 
     save = () => {
@@ -87,11 +96,18 @@ class CustomRPEChart extends React.Component {
         Object.keys(this.state.customChart).forEach(rpe => {
             Object.keys(this.state.customChart[rpe]).forEach(rep => {
                 var val = parseFloat(this.state.customChart[rpe][rep]).toFixed(1);
+                if (val <= 0) {
+                    val = 1;
+                }
+                if (val > 100) {
+                    val = 100;
+                }
                 editedChart[rpe][rep] = parseFloat(val);
             });
         });
 
         this.setState({ customChart: editedChart }, () => this.storeChart());
+        this.storeItem('is_custom_chart', true);
     }
 
     getRpePercentage = rpe => {

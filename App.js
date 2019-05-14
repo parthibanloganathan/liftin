@@ -2,8 +2,12 @@ import { createSwitchNavigator, createStackNavigator, createAppContainer } from 
 import Calculator from './Calculator';
 import CustomRPEChart from './CustomRPEChart';
 import Loading from './Loading';
-import { Constants } from 'expo';
 import { Platform } from 'react-native';
+import { SafeAreaView } from "react-navigation";
+
+if (Platform.OS === "android") {
+  SafeAreaView.setStatusBarHeight(0);
+}
 
 const AppStack = createStackNavigator({
   Calculator: Calculator,
@@ -14,7 +18,6 @@ const AppStack = createStackNavigator({
     headerTintColor: '#FFFFFF',
     headerStyle: {
       backgroundColor: '#C81429',
-      // marginTop: (Platform.OS === 'ios') ? 0 : Constants.statusBarHeight
     }
   }
 });
