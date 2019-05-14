@@ -3,6 +3,7 @@ import { AsyncStorage, ScrollView, StyleSheet, TextInput } from 'react-native';
 import * as chart from './rpechart.json';
 import { AppLoading, LinearGradient } from 'expo';
 import { Button, Divider, DropDownMenu, Heading, Icon, Text, View } from '@shoutem/ui';
+import Toast, { DURATION } from 'react-native-easy-toast'
 
 const START_RPE = 6.5;
 const END_RPE = 10;
@@ -88,6 +89,7 @@ class CustomRPEChart extends React.Component {
         const resetChart = JSON.parse(JSON.stringify(chart));
         this.setState({ customChart: resetChart }, () => this.storeChart());
         this.storeItem('is_custom_chart', false);
+        this.refs.toast.show('Reset and using default RPE chart', 1000);
     }
 
     save = () => {
@@ -108,6 +110,7 @@ class CustomRPEChart extends React.Component {
 
         this.setState({ customChart: editedChart }, () => this.storeChart());
         this.storeItem('is_custom_chart', true);
+        this.refs.toast.show('Saved and using custom RPE chart', 1000);
     }
 
     getRpePercentage = rpe => {
@@ -123,6 +126,8 @@ class CustomRPEChart extends React.Component {
 
         return (
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+
+                <Toast ref="toast" />
 
                 <LinearGradient
                     colors={['#EB3349', '#F45C43']}
