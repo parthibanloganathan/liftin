@@ -4,6 +4,8 @@ import CustomRPEChart from './CustomRPEChart';
 import Loading from './Loading';
 import { Platform } from 'react-native';
 import { SafeAreaView } from "react-navigation";
+import Recordings from './Recordings';
+import VideoPlayer from './VideoPlayer';
 
 if (Platform.OS === "android") {
   SafeAreaView.setStatusBarHeight(0);
@@ -11,13 +13,15 @@ if (Platform.OS === "android") {
 
 const AppStack = createStackNavigator({
   Calculator: Calculator,
-  RPEChart: CustomRPEChart
+  CustomRPEChart: CustomRPEChart,
+  Recordings: Recordings,
+  VideoPlayer: VideoPlayer
 },
 {
   defaultNavigationOptions: {
     headerTintColor: '#FFFFFF',
     headerStyle: {
-      backgroundColor: '#C81429',
+      backgroundColor: '#C81429'
     }
   }
 });

@@ -5,6 +5,8 @@ import { AppLoading, LinearGradient } from 'expo';
 import { Button, Divider, DropDownMenu, Heading, Icon, Text, View } from '@shoutem/ui';
 import { Surface } from 'react-native-paper';
 import { NavigationEvents } from 'react-navigation';
+import { ImagePicker, Permissions } from 'expo';
+import Toast from 'react-native-easy-toast'
 
 const LBS_INCREMENT = 5;
 const KG_INCREMENT = 2.5;
@@ -24,11 +26,32 @@ class Calculator extends React.Component {
     super(props);
     this.repValues = [];
     this.rpeValues = [];
+    this.exercises = [
+      {
+        "index": 0,
+        "value": "Squat"
+      },
+      {
+        "index": 1,
+        "value": "Deadlift"
+      },
+      {
+        "index": 2,
+        "value": "Bench Press"
+      }
+    ]
 
     for (let rep = START_REP; rep <= END_REP; rep++) {
       this.repValues.push({
         "index": this.repValues.length,
         "value": String(rep)
+      });
+    }
+
+    for (let rpe = START_RPE; rpe <= END_RPE; rpe += RPE_INCREMENT) {
+      this.rpeValues.push({
+        "index": this.rpeValues.length,
+        "value": String(rpe)
       });
     }
 
@@ -51,7 +74,9 @@ class Calculator extends React.Component {
       usingKg: false,
       weightIncrement: LBS_INCREMENT,
       chart: defaultChart,
-      usingCustomChart: false
+      usingCustomChart: false,
+      lifts: [],
+      selectedExercise: this.exercises[0]
     };
 
     delete this.state.chart.default;
@@ -92,6 +117,8 @@ class Calculator extends React.Component {
       const outputRpeIndex = await AsyncStorage.getItem('outputRpeIndex');
       const storedChart = await AsyncStorage.getItem('rpe_chart');
       const isCustomChart = await AsyncStorage.getItem('is_custom_chart');
+      const recordedLifts = await AsyncStorage.getItem('recorded_lifts');
+      const selectedExerciseIndex = await AsyncStorage.getItem('selectedExerciseIndex');
 
       if (value === "true") {
         this.setUnit(true);
@@ -120,6 +147,12 @@ class Calculator extends React.Component {
       if (isCustomChart !== null) {
         this.setState({ usingCustomChart: JSON.parse(isCustomChart) });
       }
+      if (recordedLifts !== null) {
+        this.setState({ lifts: JSON.parse(recordedLifts) });
+      }
+      if (selectedExerciseIndex !== null) {
+        this.setState({ selectedExercise: this.exercises[parseInt(selectedExerciseIndex)] });
+      }
 
     } catch (error) {
       console.log(error);
@@ -135,14 +168,18 @@ class Calculator extends React.Component {
     return {
       Title: "Home",
       headerRight: (
-        <Button
-          styleName="clear md-gutter"
-          onPress={() => navigation.navigate('RPEChart', { callback: this.retrieveState })}>
+        <View styleName="horizontal">
+          <Icon
+            name="music-video"
+            style={{ color: '#FFFFFF', marginRight: 20 }}
+            onPress={() => navigation.navigate('Recordings')}
+          />
           <Icon
             name="edit"
-            style={{ color: '#FFFFFF' }} />
-          <Text style={{ color: '#FFFFFF' }}>CUSTOM</Text>
-        </Button>
+            style={{ color: '#FFFFFF', marginRight: 10 }}
+            onPress={() => navigation.navigate('CustomRPEChart')}
+          />
+        </View>
       )
     }
   };
@@ -223,6 +260,37 @@ class Calculator extends React.Component {
     });
   }
 
+  addRecording = async () => {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);
+    if (status === 'granted') {
+
+      let result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        mediaTypes: ImagePicker.MediaTypeOptions.Videos
+      });
+
+      if (!result.cancelled) {
+        const updatedLifts = JSON.parse(JSON.stringify(this.state.lifts));
+        
+        updatedLifts.push({
+          id: this.state.lifts.length,
+          weight: this.state.outputWeight,
+          reps: this.state.outputReps.value,
+          rpe: this.state.outputRpe.value,
+          date: new Date(),
+          unit: this.state.usingKg ? "kg" : "lbs",
+          video: result.uri,
+          exercise: this.state.selectedExercise.value
+        });
+
+        this.setState({ lifts: updatedLifts }, () => this.storeItem("recorded_lifts", this.state.lifts));
+        this.refs.toast.show('Added your recording', 1000);
+      }
+    } else {
+      this.refs.toast.show('You need to provide camera permissions to record', 1000);
+    }
+  }
+
   render() {
     const { loaded, usingKg } = this.state;
 
@@ -232,6 +300,10 @@ class Calculator extends React.Component {
 
     return (
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+
+        <Toast
+          ref="toast"
+          positionValue={20} />
 
         <NavigationEvents
           onWillFocus={() => {
@@ -407,7 +479,34 @@ class Calculator extends React.Component {
                 {this.state.oneRepMax}
               </Text>
             </Surface>
-            {this.state.usingCustomChart ? <Text style={styles.note}>Using your custom chart. You can reset it in settings</Text> : <Text style={styles.note}>Using default RPE chart</Text>}
+            {this.state.usingCustomChart ? <Text style={styles.note}>Using your custom chart. You can reset it in settings</Text> : <Text style={styles.note}>Using default RPE chart. Hit edit to use your own</Text>}
+            <Divider styleName="line" style={{ marginTop: 20, marginBottom: 20 }} />
+            <View style={{
+              flex: 1,
+              flexDirection: 'column',
+              justifyContent: 'center',
+            }}>
+              <Text style={styles.label}>Record this lift</Text>
+              <DropDownMenu
+                options={this.exercises}
+                selectedOption={this.state.selectedExercise}
+                onOptionSelected={(item) => this.handleDropDownSelection('selectedExercise', item)}
+                titleProperty="value"
+                valueProperty="index"
+                style={{
+                  selectedOption: {
+                    backgroundColor: 'white',
+                    borderRadius: 5,
+                    margin: 10
+                  }
+                }}
+              />
+              <Button
+                style={{ marginBottom: 50 }}
+                onPress={this.addRecording}>
+                <Text>RECORD</Text>
+              </Button>
+            </View>
           </View>
         </LinearGradient>
       </ScrollView>
@@ -436,8 +535,7 @@ const styles = StyleSheet.create({
     borderRadius: 5
   },
   note: {
-    color: '#FFFFFF',
-    marginBottom: 10
+    color: '#FFFFFF'
   }
 });
 

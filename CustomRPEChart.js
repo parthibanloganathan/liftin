@@ -3,7 +3,7 @@ import { AsyncStorage, ScrollView, StyleSheet, TextInput } from 'react-native';
 import * as chart from './rpechart.json';
 import { AppLoading, LinearGradient } from 'expo';
 import { Button, Divider, DropDownMenu, Heading, Icon, Text, View } from '@shoutem/ui';
-import Toast, { DURATION } from 'react-native-easy-toast'
+import Toast from 'react-native-easy-toast'
 
 const START_RPE = 6.5;
 const END_RPE = 10;
@@ -127,7 +127,9 @@ class CustomRPEChart extends React.Component {
         return (
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 
-                <Toast ref="toast" />
+                <Toast
+                    ref="toast"
+                    positionValue={200} />
 
                 <LinearGradient
                     colors={['#EB3349', '#F45C43']}
@@ -202,7 +204,7 @@ class CustomRPEChart extends React.Component {
                                     );
                                 })
                             }
-
+                            <View style={{ height: 100 }}></View>
                         </View>
                     </View>
                 </LinearGradient>
