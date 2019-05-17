@@ -7,7 +7,7 @@ class VideoPlayer extends React.Component {
     render() {
         const { width } = Dimensions.get('window');
         const video = this.props.navigation.getParam('video', null);
-        const title = this.props.navigation.getParams('title', '');
+        const title = this.props.navigation.getParam('title', '');
 
         if (video === null) {
             return <Text style={{ color: '#FFF', textAlign: 'center', marginTop: 50 }}>Video not found :-(</Text>;

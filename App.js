@@ -6,6 +6,7 @@ import { Platform } from 'react-native';
 import { SafeAreaView } from "react-navigation";
 import Recordings from './Recordings';
 import VideoPlayer from './VideoPlayer';
+import VideoCamera from './VideoCamera';
 
 if (Platform.OS === "android") {
   SafeAreaView.setStatusBarHeight(0);
@@ -15,7 +16,8 @@ const AppStack = createStackNavigator({
   Calculator: Calculator,
   CustomRPEChart: CustomRPEChart,
   Recordings: Recordings,
-  VideoPlayer: VideoPlayer
+  VideoPlayer: VideoPlayer,
+  VideoCamera: VideoCamera
 },
 {
   defaultNavigationOptions: {
@@ -39,4 +41,4 @@ const App = createAppContainer(createSwitchNavigator(
   }
 ));
 
-export default App;
+export default App; 

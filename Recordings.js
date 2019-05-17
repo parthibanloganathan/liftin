@@ -43,9 +43,7 @@ class Recordings extends React.Component {
 
     deleteLift = id => {
         var updatedLifts = JSON.parse(JSON.stringify(this.state.lifts));
-        console.log(updatedLifts);
         updatedLifts = updatedLifts.filter(lift => lift.id !== id);
-        console.log(updatedLifts);
         this.setState({ lifts: updatedLifts }, () => this.storeItem("recorded_lifts", this.state.lifts));
         this.refs.toast.show('Deleted lift', 1000);
     }
@@ -65,7 +63,7 @@ class Recordings extends React.Component {
                                 style={styles.button}
                                 onPress={() => this.props.navigation.navigate('VideoPlayer', {
                                     video: lift.video,
-                                    title: lift.exercise + ": " + lift.weight + " " + lift.unit + " for " + lift.reps + " rep(s) @ RPE " + lift.rpe " on " + dateFormat(lift.date, "mmm d, yyyy")
+                                    title: lift.exercise + ": " + lift.weight + " " + lift.unit + " for " + lift.reps + " rep(s) @ RPE " + lift.rpe + " on " + dateFormat(lift.date, "mmm d, yyyy")
                                 })}>
                                 <Icon name="play" />
                             </Button>

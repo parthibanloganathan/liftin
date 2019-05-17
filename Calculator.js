@@ -76,13 +76,16 @@ class Calculator extends React.Component {
       chart: defaultChart,
       usingCustomChart: false,
       lifts: [],
-      selectedExercise: this.exercises[0]
+      selectedExercise: this.exercises[0],
+      videoUri: null
     };
 
     delete this.state.chart.default;
 
     this.state.outputWeight = this.calculateWeight();
     this.state.oneRepMax = this.calculateOneRepMax();
+
+    // AsyncStorage.clear();
   }
 
   setUnit = async (usingKgValue) => {
@@ -260,35 +263,53 @@ class Calculator extends React.Component {
     });
   }
 
-  addRecording = async () => {
+  selectVideo = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);
     if (status === 'granted') {
-
       let result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,
         mediaTypes: ImagePicker.MediaTypeOptions.Videos
       });
 
       if (!result.cancelled) {
-        const updatedLifts = JSON.parse(JSON.stringify(this.state.lifts));
-        
-        updatedLifts.push({
-          id: this.state.lifts.length,
-          weight: this.state.outputWeight,
-          reps: this.state.outputReps.value,
-          rpe: this.state.outputRpe.value,
-          date: new Date(),
-          unit: this.state.usingKg ? "kg" : "lbs",
-          video: result.uri,
-          exercise: this.state.selectedExercise.value
-        });
-
-        this.setState({ lifts: updatedLifts }, () => this.storeItem("recorded_lifts", this.state.lifts));
-        this.refs.toast.show('Added your recording', 1000);
+        this.setState({ videoUri: result.uri });
+        this.refs.toast.show('Video selected', 1000);
       }
     } else {
       this.refs.toast.show('You need to provide camera permissions to record', 1000);
     }
+  }
+
+  recordVideo = async () => {
+    this.props.navigation.navigate('VideoCamera', {
+      onVideoTaken: videoUri => {
+        this.setState({ videoUri: videoUri });
+        this.refs.toast.show('Video selected', 1000);
+      }
+    })
+  }
+
+  save = () => {
+    if (this.state.videoUri === null) {
+      this.refs.toast.show('Select a recording first', 1000);
+      return;
+    }
+
+    const updatedLifts = JSON.parse(JSON.stringify(this.state.lifts));
+
+    updatedLifts.push({
+      id: this.state.lifts.length,
+      weight: this.state.outputWeight,
+      reps: this.state.outputReps.value,
+      rpe: this.state.outputRpe.value,
+      date: new Date(),
+      unit: this.state.usingKg ? "kg" : "lbs",
+      video: this.state.videoUri,
+      exercise: this.state.selectedExercise.value
+    });
+
+    this.setState({ lifts: updatedLifts }, () => this.storeItem("recorded_lifts", this.state.lifts));
+    this.refs.toast.show('Added your recording', 1000);
   }
 
   render() {
@@ -503,8 +524,18 @@ class Calculator extends React.Component {
               />
               <Button
                 style={{ marginBottom: 50 }}
-                onPress={this.addRecording}>
+                onPress={this.selectVideo}>
+                <Text>SELECT VIDEO</Text>
+              </Button>
+              <Button
+                style={{ marginBottom: 50 }}
+                onPress={this.recordVideo}>
                 <Text>RECORD</Text>
+              </Button>
+              <Button
+                style={{ marginBottom: 50 }}
+                onPress={this.save}>
+                <Text>SAVE</Text>
               </Button>
             </View>
           </View>
