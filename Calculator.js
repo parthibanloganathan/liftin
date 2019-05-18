@@ -26,20 +26,6 @@ class Calculator extends React.Component {
     super(props);
     this.repValues = [];
     this.rpeValues = [];
-    this.exercises = [
-      {
-        "index": 0,
-        "value": "Squat"
-      },
-      {
-        "index": 1,
-        "value": "Deadlift"
-      },
-      {
-        "index": 2,
-        "value": "Bench Press"
-      }
-    ]
 
     for (let rep = START_REP; rep <= END_REP; rep++) {
       this.repValues.push({
@@ -74,16 +60,13 @@ class Calculator extends React.Component {
       usingKg: false,
       weightIncrement: LBS_INCREMENT,
       chart: defaultChart,
-      usingCustomChart: false,
-      lifts: [],
-      selectedExercise: this.exercises[0],
-      videoUri: null
+      usingCustomChart: false
     };
 
     delete this.state.chart.default;
 
-    this.state.outputWeight = this.calculateWeight();
-    this.state.oneRepMax = this.calculateOneRepMax();
+    this.setState({ outputWeight: this.calculateWeight() });
+    this.setState({ oneRepMax: this.calculateOneRepMax() });
 
     // AsyncStorage.clear();
   }
@@ -118,10 +101,8 @@ class Calculator extends React.Component {
       const inputWeight = await AsyncStorage.getItem('inputWeight');
       const outputRepsIndex = await AsyncStorage.getItem('outputRepsIndex');
       const outputRpeIndex = await AsyncStorage.getItem('outputRpeIndex');
-      const storedChart = await AsyncStorage.getItem('rpe_chart');
-      const isCustomChart = await AsyncStorage.getItem('is_custom_chart');
-      const recordedLifts = await AsyncStorage.getItem('recorded_lifts');
-      const selectedExerciseIndex = await AsyncStorage.getItem('selectedExerciseIndex');
+      const storedChart = await AsyncStorage.getItem('rpeChart');
+      const isCustomChart = await AsyncStorage.getItem('isCustomChart');
 
       if (value === "true") {
         this.setUnit(true);
@@ -150,13 +131,9 @@ class Calculator extends React.Component {
       if (isCustomChart !== null) {
         this.setState({ usingCustomChart: JSON.parse(isCustomChart) });
       }
-      if (recordedLifts !== null) {
-        this.setState({ lifts: JSON.parse(recordedLifts) });
-      }
-      if (selectedExerciseIndex !== null) {
-        this.setState({ selectedExercise: this.exercises[parseInt(selectedExerciseIndex)] });
-      }
 
+      this.setState({ outputWeight: this.calculateWeight() });
+      this.setState({ oneRepMax: this.calculateOneRepMax() });
     } catch (error) {
       console.log(error);
     }
@@ -261,55 +238,6 @@ class Calculator extends React.Component {
       this.setState({ outputWeight: this.calculateWeight(), oneRepMax: this.calculateOneRepMax() });
       this.setUnit(value);
     });
-  }
-
-  selectVideo = async () => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);
-    if (status === 'granted') {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        allowsEditing: true,
-        mediaTypes: ImagePicker.MediaTypeOptions.Videos
-      });
-
-      if (!result.cancelled) {
-        this.setState({ videoUri: result.uri });
-        this.refs.toast.show('Video selected', 1000);
-      }
-    } else {
-      this.refs.toast.show('You need to provide camera permissions to record', 1000);
-    }
-  }
-
-  recordVideo = async () => {
-    this.props.navigation.navigate('VideoCamera', {
-      onVideoTaken: videoUri => {
-        this.setState({ videoUri: videoUri });
-        this.refs.toast.show('Video selected', 1000);
-      }
-    })
-  }
-
-  save = () => {
-    if (this.state.videoUri === null) {
-      this.refs.toast.show('Select a recording first', 1000);
-      return;
-    }
-
-    const updatedLifts = JSON.parse(JSON.stringify(this.state.lifts));
-
-    updatedLifts.push({
-      id: this.state.lifts.length,
-      weight: this.state.outputWeight,
-      reps: this.state.outputReps.value,
-      rpe: this.state.outputRpe.value,
-      date: new Date(),
-      unit: this.state.usingKg ? "kg" : "lbs",
-      video: this.state.videoUri,
-      exercise: this.state.selectedExercise.value
-    });
-
-    this.setState({ lifts: updatedLifts }, () => this.storeItem("recorded_lifts", this.state.lifts));
-    this.refs.toast.show('Added your recording', 1000);
   }
 
   render() {
@@ -502,42 +430,17 @@ class Calculator extends React.Component {
             </Surface>
             {this.state.usingCustomChart ? <Text style={styles.note}>Using your custom chart. You can reset it in settings</Text> : <Text style={styles.note}>Using default RPE chart. Hit edit to use your own</Text>}
             <Divider styleName="line" style={{ marginTop: 20, marginBottom: 20 }} />
-            <View style={{
-              flex: 1,
-              flexDirection: 'column',
-              justifyContent: 'center',
-            }}>
-              <Text style={styles.label}>Record this lift</Text>
-              <DropDownMenu
-                options={this.exercises}
-                selectedOption={this.state.selectedExercise}
-                onOptionSelected={(item) => this.handleDropDownSelection('selectedExercise', item)}
-                titleProperty="value"
-                valueProperty="index"
-                style={{
-                  selectedOption: {
-                    backgroundColor: 'white',
-                    borderRadius: 5,
-                    margin: 10
-                  }
-                }}
-              />
-              <Button
-                style={{ marginBottom: 50 }}
-                onPress={this.selectVideo}>
-                <Text>SELECT VIDEO</Text>
-              </Button>
-              <Button
-                style={{ marginBottom: 50 }}
-                onPress={this.recordVideo}>
-                <Text>RECORD</Text>
-              </Button>
-              <Button
-                style={{ marginBottom: 50 }}
-                onPress={this.save}>
-                <Text>SAVE</Text>
-              </Button>
-            </View>
+            <Button
+              style={{ marginBottom: 20 }}
+              onPress={() => this.props.navigation.navigate('Record', {
+                reps: this.state.outputReps.value,
+                rpe: this.state.outputRpe.value,
+                weight: this.state.outputWeight,
+                unit: this.state.usingKg ? "kg" : "lbs"
+              })}>
+              <Icon name="take-a-photo" />
+              <Text>RECORD SET</Text>
+            </Button>
           </View>
         </LinearGradient>
       </ScrollView>

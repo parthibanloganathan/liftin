@@ -25,7 +25,7 @@ class Recordings extends React.Component {
 
     async retrieveRecordings() {
         try {
-            const storedLifts = await AsyncStorage.getItem('recorded_lifts');
+            const storedLifts = await AsyncStorage.getItem('recordedLifts');
 
             if (storedLifts !== null) {
                 this.setState({ lifts: JSON.parse(storedLifts) });
@@ -44,7 +44,7 @@ class Recordings extends React.Component {
     deleteLift = id => {
         var updatedLifts = JSON.parse(JSON.stringify(this.state.lifts));
         updatedLifts = updatedLifts.filter(lift => lift.id !== id);
-        this.setState({ lifts: updatedLifts }, () => this.storeItem("recorded_lifts", this.state.lifts));
+        this.setState({ lifts: updatedLifts }, () => this.storeItem("recordedLifts", this.state.lifts));
         this.refs.toast.show('Deleted lift', 1000);
     }
 

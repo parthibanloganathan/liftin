@@ -43,7 +43,7 @@ class CustomRPEChart extends React.Component {
 
     async storeChart() {
         try {
-            await AsyncStorage.setItem('rpe_chart', JSON.stringify(this.state.customChart));
+            await AsyncStorage.setItem('rpeChart', JSON.stringify(this.state.customChart));
         } catch (error) {
             console.log(error);
         }
@@ -59,7 +59,7 @@ class CustomRPEChart extends React.Component {
 
     async retrieveChart() {
         try {
-            const storedChart = await AsyncStorage.getItem('rpe_chart');
+            const storedChart = await AsyncStorage.getItem('rpeChart');
 
             if (storedChart !== null) {
                 this.setState({ customChart: JSON.parse(storedChart) });
@@ -88,7 +88,7 @@ class CustomRPEChart extends React.Component {
     reset = () => {
         const resetChart = JSON.parse(JSON.stringify(chart));
         this.setState({ customChart: resetChart }, () => this.storeChart());
-        this.storeItem('is_custom_chart', false);
+        this.storeItem('isCustomChart', false);
         this.refs.toast.show('Reset and using default RPE chart', 1000);
     }
 
@@ -109,7 +109,7 @@ class CustomRPEChart extends React.Component {
         });
 
         this.setState({ customChart: editedChart }, () => this.storeChart());
-        this.storeItem('is_custom_chart', true);
+        this.storeItem('isCustomChart', true);
         this.refs.toast.show('Saved and using custom RPE chart', 1000);
     }
 

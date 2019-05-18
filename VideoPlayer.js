@@ -16,7 +16,7 @@ class VideoPlayer extends React.Component {
         return (
             <View style={styles.container}>
                 <View>
-                    <Text style={{ color: '#FFF', textAlign: 'center' }}> title </Text>
+                    <Text style={{ color: '#FFF', textAlign: 'center', marginBottom: 20 }}> {title} </Text>
                     <Video
                         source={{ uri: video }}
                         resizeMode={Video.RESIZE_MODE_COVER}

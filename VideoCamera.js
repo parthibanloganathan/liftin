@@ -1,3 +1,4 @@
+// Base copied from https://github.com/expo/camerja/blob/master/App.js
 import { Constants, Camera, FileSystem, Permissions, BarCodeScanner } from 'expo';
 import React from 'react';
 import {
@@ -9,7 +10,6 @@ import {
     Slider,
     Platform
 } from 'react-native';
-// import isIPhoneX from 'react-native-is-iphonex';
 
 import {
     Ionicons,
@@ -112,82 +112,88 @@ export default class VideoCamera extends React.Component {
                     this.props.navigation.state.params.onVideoTaken(newLocation);
                     this.props.navigation.goBack();
                 });
-        });
+            });
+        }
+    };
+
+    stopVideo = async () => {
+        if (this.camera) {
+            this.setState({ recording: false });
+            this.camera.stopRecording();
+        }
     }
-};
 
-stopVideo = async () => {
-    if (this.camera) {
-        this.setState({ recording: false });
-        this.camera.stopRecording();
-    }
-}
+    handleMountError = ({ message }) => console.error(message);
 
-handleMountError = ({ message }) => console.error(message);
-
-renderNoPermissions = () =>
-    <View style={styles.noPermissions}>
-        <Text style={{ color: 'white' }}>
-            Camera permissions not granted - cannot open camera preview.
+    renderNoPermissions = () =>
+        <View style={styles.noPermissions}>
+            <Text style={{ color: 'white' }}>
+                Camera permissions not granted - cannot open camera preview.
       </Text>
-    </View>
+        </View>
 
-renderTopBar = () =>
-    <View
-        style={styles.topBar}>
-        <TouchableOpacity style={styles.toggleButton} onPress={this.toggleFacing}>
-            <Ionicons name="ios-reverse-camera" size={32} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.toggleButton} onPress={this.toggleFocus}>
-            <Text style={[styles.autoFocusLabel, { color: this.state.autoFocus === 'on' ? "white" : "#6b6b6b" }]}>AF</Text>
-        </TouchableOpacity>
-    </View>
-
-renderBottomBar = () =>
-    <View
-        style={styles.bottomBar}>
-        <View style={{ flex: 1 }}>
-            <TouchableOpacity
-                onPress={() => {
-                    this.state.recording ? this.stopVideo() : this.startVideo()
-                }}
-                style={{ alignSelf: 'center' }}
-            >
-                {this.state.recording ? <Ionicons name="ios-radio-button-on" size={70} color="red" /> : <Ionicons name="ios-radio-button-on" size={70} color="white" />}
+    renderTopBar = () =>
+        <View
+            style={styles.topBar}>
+            <TouchableOpacity style={styles.toggleButton} onPress={this.toggleFacing}>
+                <Ionicons name="ios-reverse-camera" size={32} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.toggleButton} onPress={this.toggleFocus}>
+                <Text style={[styles.autoFocusLabel, { color: this.state.autoFocus === 'on' ? "white" : "#6b6b6b" }]}>AF</Text>
             </TouchableOpacity>
         </View>
-    </View>
 
-renderCamera = () =>
-    (
-        <View style={{ flex: 1 }}>
-            <Camera
-                ref={ref => {
-                    this.camera = ref;
-                }}
-                style={styles.camera}
-                onCameraReady={this.collectPictureSizes}
-                type={this.state.type}
-                flashMode={this.state.flash}
-                autoFocus={this.state.autoFocus}
-                zoom={this.state.zoom}
-                whiteBalance={this.state.whiteBalance}
-                ratio={this.state.ratio}
-                onMountError={this.handleMountError}
-            >
-                {this.renderTopBar()}
-                {this.renderBottomBar()}
-            </Camera>
+    renderBottomBar = () =>
+        <View
+            style={styles.bottomBar}>
+            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around' }}>
+                <TouchableOpacity style={styles.bottomButton} onPress={this.zoomOut}>
+                    <Text style={[styles.autoFocusLabel, { color: 'white' }]}>-</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {
+                        this.state.recording ? this.stopVideo() : this.startVideo()
+                    }}
+                    style={{ alignSelf: 'center' }}
+                >
+                    {this.state.recording ? <Ionicons name="ios-radio-button-on" size={70} color="red" /> : <Ionicons name="ios-radio-button-on" size={70} color="white" />}
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.bottomButton} onPress={this.zoomIn}>
+                    <Text style={[styles.autoFocusLabel, { color : 'white' }]}>+</Text>
+                </TouchableOpacity>
+            </View>
         </View>
-    );
 
-render() {
-    const cameraScreenContent = this.state.permissionsGranted
-        ? this.renderCamera()
-        : this.renderNoPermissions();
-    const content = cameraScreenContent;
-    return <View style={styles.container}>{content}</View>;
-}
+    renderCamera = () =>
+        (
+            <View style={{ flex: 1 }}>
+                <Camera
+                    ref={ref => {
+                        this.camera = ref;
+                    }}
+                    style={styles.camera}
+                    onCameraReady={this.collectPictureSizes}
+                    type={this.state.type}
+                    flashMode={this.state.flash}
+                    autoFocus={this.state.autoFocus}
+                    zoom={this.state.zoom}
+                    whiteBalance={this.state.whiteBalance}
+                    ratio={this.state.ratio}
+                    onMountError={this.handleMountError}
+                >
+                    {/* {this.renderTopBar()} */}
+                    {this.renderBottomBar()}
+                </Camera>
+            </View>
+        );
+
+    render() {
+        const cameraScreenContent = this.state.permissionsGranted
+            ? this.renderCamera()
+            : this.renderNoPermissions();
+        const content = cameraScreenContent;
+        return <View style={styles.container}>{content}</View>;
+    }
 }
 
 const styles = StyleSheet.create({
