@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import { Video } from 'expo';
-import { MaterialIcons, Octicons } from '@expo/vector-icons';
 
 class VideoPlayer extends React.Component {
     render() {

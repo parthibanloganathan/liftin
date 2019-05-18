@@ -1,10 +1,10 @@
 import React from 'react';
 import { AsyncStorage, Dimensions, ScrollView, StyleSheet } from 'react-native';
 import { AppLoading, LinearGradient } from 'expo';
-import { Button, Divider, DropDownMenu, Heading, Image, Text, View } from '@shoutem/ui';
+import { Button, DropDownMenu, Heading, Image, Text, View } from '@shoutem/ui';
 import { ImagePicker, Permissions } from 'expo';
 import Toast from 'react-native-easy-toast'
-import ProgressiveImage from 'react-native-progressive-image'
+// import ProgressiveImage from 'react-native-progressive-image'
 
 class Record extends React.Component {
     constructor(props) {

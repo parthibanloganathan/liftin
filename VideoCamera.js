@@ -1,5 +1,5 @@
 // Base copied from https://github.com/expo/camerja/blob/master/App.js
-import { Constants, Camera, FileSystem, Permissions, BarCodeScanner } from 'expo';
+import { Constants, Camera, FileSystem, Permissions } from 'expo';
 import React from 'react';
 import {
     Alert,

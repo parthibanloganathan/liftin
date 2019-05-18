@@ -1,5 +1,5 @@
 import React from 'react';
-import { AsyncStorage, ScrollView, StyleSheet } from 'react-native';
+import { AsyncStorage, StyleSheet } from 'react-native';
 import { Button, Divider, Icon, ImageBackground, ListView, Screen, Subtitle, Text, Tile, Title, View } from '@shoutem/ui';
 import { AppLoading, LinearGradient } from 'expo';
 import Toast from 'react-native-easy-toast'
