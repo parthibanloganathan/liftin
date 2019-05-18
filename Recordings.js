@@ -6,6 +6,12 @@ import Toast from 'react-native-easy-toast'
 
 const dateFormat = require('dateformat');
 
+const images = {
+    squat: require('./assets/Squat.jpg'),
+    deadlift: require('./assets/Deadlift.jpg'),
+    benchpress: require('./assets/BenchPress.jpg'),
+};
+
 class Recordings extends React.Component {
     constructor(props) {
         super(props);
@@ -49,17 +55,27 @@ class Recordings extends React.Component {
     }
 
     renderRow = lift => {
+        var image;
+        if (lift.exercise === "Squat") {
+            image = images.squat;
+        } else if (lift.exercise === "Deadlift") {
+            image = images.deadlift;
+        } else {
+            image = images.benchpress;
+        }
+
         return (
             <View>
                 <ImageBackground
                     styleName="large-banner"
-                    source={{ uri: lift.video }}
+                    source={image}
                 >
                     <Tile>
                         <Title styleName="md-gutter-bottom">{lift.exercise + ": " + lift.weight + " " + lift.unit + " for " + lift.reps + " rep(s) @ RPE " + lift.rpe}</Title>
                         <Subtitle styleName="sm-gutter-horizontal">{dateFormat(lift.date, "mmm d, yyyy")}</Subtitle>
                         <View styleName="horizontal">
                             <Button
+                                icon="play"
                                 style={styles.button}
                                 onPress={() => this.props.navigation.navigate('VideoPlayer', {
                                     video: lift.video,
@@ -68,6 +84,7 @@ class Recordings extends React.Component {
                                 <Icon name="play" />
                             </Button>
                             <Button
+                                icon="close"
                                 style={styles.button}
                                 onPress={() => this.deleteLift(lift.id)}>
                                 <Icon name="close" />
@@ -121,9 +138,8 @@ class Recordings extends React.Component {
 
 const styles = StyleSheet.create({
     button: {
-        height: 30,
-        width: 50,
-        margin: 5
+        margin: 5,
+        textAlign: 'center'
     }
 });
 

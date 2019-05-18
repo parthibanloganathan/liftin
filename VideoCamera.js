@@ -2,21 +2,16 @@
 import { Constants, Camera, FileSystem, Permissions } from 'expo';
 import React from 'react';
 import {
-    Alert,
     StyleSheet,
     Text,
     View,
     TouchableOpacity,
     Slider,
-    Platform
+    ImageBackground,
 } from 'react-native';
 
 import {
     Ionicons,
-    MaterialIcons,
-    Foundation,
-    MaterialCommunityIcons,
-    Octicons
 } from '@expo/vector-icons';
 
 const landmarkSize = 2;
@@ -159,7 +154,7 @@ export default class VideoCamera extends React.Component {
                     {this.state.recording ? <Ionicons name="ios-radio-button-on" size={70} color="red" /> : <Ionicons name="ios-radio-button-on" size={70} color="white" />}
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.bottomButton} onPress={this.zoomIn}>
-                    <Text style={[styles.autoFocusLabel, { color : 'white' }]}>+</Text>
+                    <Text style={[styles.autoFocusLabel, { color: 'white' }]}>+</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -167,6 +162,11 @@ export default class VideoCamera extends React.Component {
     renderCamera = () =>
         (
             <View style={{ flex: 1 }}>
+                {/* <ImageBackground source={require('./assets/fake.jpg')} style={styles.camera} >
+                {this.renderTopBar()}
+                {this.renderBottomBar()}
+                </ImageBackground> */}
+
                 <Camera
                     ref={ref => {
                         this.camera = ref;

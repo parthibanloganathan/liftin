@@ -65,10 +65,8 @@ class Calculator extends React.Component {
 
     delete this.state.chart.default;
 
-    this.setState({ outputWeight: this.calculateWeight() });
-    this.setState({ oneRepMax: this.calculateOneRepMax() });
-
-    // AsyncStorage.clear();
+    this.state.outputWeight = this.calculateWeight();
+    this.state.oneRepMax = this.calculateOneRepMax();
   }
 
   setUnit = async (usingKgValue) => {

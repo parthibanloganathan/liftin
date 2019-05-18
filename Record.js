@@ -4,7 +4,6 @@ import { AppLoading, LinearGradient } from 'expo';
 import { Button, DropDownMenu, Heading, Image, Text, View } from '@shoutem/ui';
 import { ImagePicker, Permissions } from 'expo';
 import Toast from 'react-native-easy-toast'
-// import ProgressiveImage from 'react-native-progressive-image'
 
 class Record extends React.Component {
     constructor(props) {
@@ -114,6 +113,7 @@ class Record extends React.Component {
             date: new Date(),
             unit: this.state.unit,
             video: this.state.videoUri,
+            thumbnailUri: this.state.thumbnailUri,
             exercise: this.state.selectedExercise.value
         });
 
@@ -165,37 +165,14 @@ class Record extends React.Component {
                                 }
                             }}
                         />
-                    </View>
 
-                    <View style={{
-                        flex: 1,
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        height: 300,
-                        width: screenWidth - 20
-                    }}>
                         {
                             this.state.videoUri ?
-                                // <ProgressiveImage
-                                //     imageSource={{ uri: this.state.videoUri }}
-                                //     style={{ flex: 1, alignItems: 'stretch' }}
-                                // />
-
-                                <Image
-                                    styleName="featured"
-                                    style={{ margin: 10, height: 290 }}
-                                    source={{ uri: this.state.videoUri }}
-                                />
+                                <Text style={styles.label}>Video selected</Text>
                                 :
                                 <Text style={styles.label}>No video selected</Text>
                         }
-                    </View>
 
-                    <View style={{
-                        flex: 1,
-                        flexDirection: 'column',
-                        justifyContent: 'center'
-                    }}>
                         <View styleName="horizontal lg-gutter">
                             <Button
                                 style={{ marginRight: 10 }}
