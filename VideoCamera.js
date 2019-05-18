@@ -135,12 +135,12 @@ export default class VideoCamera extends React.Component {
     renderTopBar = () =>
         <View
             style={styles.topBar}>
-            <TouchableOpacity style={styles.toggleButton} onPress={this.toggleFacing}>
+            {/* <TouchableOpacity style={styles.toggleButton} onPress={this.toggleFacing}>
                 <Ionicons name="ios-reverse-camera" size={32} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.toggleButton} onPress={this.toggleFocus}>
+            </TouchableOpacity> */}
+            {/* <TouchableOpacity style={styles.toggleButton} onPress={this.toggleFocus}>
                 <Text style={[styles.autoFocusLabel, { color: this.state.autoFocus === 'on' ? "white" : "#6b6b6b" }]}>AF</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
 
     renderBottomBar = () =>
@@ -181,7 +181,7 @@ export default class VideoCamera extends React.Component {
                     ratio={this.state.ratio}
                     onMountError={this.handleMountError}
                 >
-                    {/* {this.renderTopBar()} */}
+                    {this.renderTopBar()}
                     {this.renderBottomBar()}
                 </Camera>
             </View>
