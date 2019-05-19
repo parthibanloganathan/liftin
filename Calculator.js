@@ -5,7 +5,6 @@ import { AppLoading, LinearGradient } from 'expo';
 import { Button, Divider, DropDownMenu, Heading, Icon, Text, View } from '@shoutem/ui';
 import { Surface } from 'react-native-paper';
 import { NavigationEvents } from 'react-navigation';
-import { ImagePicker, Permissions } from 'expo';
 import Toast from 'react-native-easy-toast'
 
 const LBS_INCREMENT = 5;
