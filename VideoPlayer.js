@@ -1,8 +1,16 @@
 import React from 'react';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
-import { Video } from 'expo';
+import { ScreenOrientation, Video } from 'expo';
 
 class VideoPlayer extends React.Component {
+    componentWillMount() {
+        ScreenOrientation.allowAsync(ScreenOrientation.Orientation.PORTRAIT_UP);
+    }
+
+    componentWillUnmount() {
+        ScreenOrientation.allowAsync(ScreenOrientation.Orientation.ALL);
+    }
+
     render() {
         const { width } = Dimensions.get('window');
         const video = this.props.navigation.getParam('video', null);

@@ -1,5 +1,5 @@
 // Base copied from https://github.com/expo/camerja/blob/master/App.js
-import { Constants, Camera, FileSystem, Permissions } from 'expo';
+import { Constants, Camera, FileSystem, Permissions, ScreenOrientation } from 'expo';
 import React from 'react';
 import {
     StyleSheet,
@@ -63,6 +63,7 @@ export default class VideoCamera extends React.Component {
 
     async componentWillMount() {
         const { status } = await Permissions.askAsync(Permissions.CAMERA, Permissions.AUDIO_RECORDING);
+        ScreenOrientation.allowAsync(ScreenOrientation.Orientation.PORTRAIT_UP);
         this.setState({ permissionsGranted: status === 'granted' });
     }
 
@@ -70,6 +71,10 @@ export default class VideoCamera extends React.Component {
         FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + 'videos').catch(e => {
             // console.log(e, 'Directory exists');
         });
+    }
+
+    componentWillUnmount() {
+        ScreenOrientation.allowAsync(ScreenOrientation.Orientation.ALL);
     }
 
     getRatios = async () => {
