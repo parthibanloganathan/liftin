@@ -40,13 +40,6 @@ class Calculator extends React.Component {
       });
     }
 
-    for (let rpe = START_RPE; rpe <= END_RPE; rpe += RPE_INCREMENT) {
-      this.rpeValues.push({
-        "index": this.rpeValues.length,
-        "value": String(rpe)
-      });
-    }
-
     this.state = {
       inputReps: this.repValues[4],
       inputRpe: this.rpeValues[3],

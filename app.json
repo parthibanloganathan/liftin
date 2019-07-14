@@ -8,7 +8,7 @@
       "ios",
       "android"
     ],
-    "version": "1.0.4",
+    "version": "1.0.5",
     "primaryColor": "#EB3349",
     "icon": "./assets/icon.png",
     "splash": {
@@ -24,7 +24,13 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.parthi.liftin"
+      "bundleIdentifier": "com.parthi.liftin",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Give Liftin access to your camera so that you can record your sets",
+        "NSMicrophoneUsageDescription": "Give Liftin access to the microphone in your camera so that you can record your sets",
+        "NSPhotoLibraryAddUsageDescription": "Give Liftin access to your photos library to select recordigns of your sets",
+        "NSPhotoLibraryUsageDescription": "Give Liftin access to your photos library to select recordigns of your sets"
+      }
     },
     "android": {
       "package": "com.parthi.liftin",
@@ -35,8 +41,9 @@
       },
       "permissions": [
         "CAMERA",
-        "CAMERA_ROLL",
-        "AUDIO_RECORDING"
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "RECORD_AUDIO"
       ]
     },
     "androidStatusBar": {
