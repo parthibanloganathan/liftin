@@ -1,5 +1,7 @@
 import React from 'react';
-import { AppLoading, Font } from 'expo';
+import { AppLoading } from 'expo';
+
+import * as Font from 'expo-font';
 
 class Loading extends React.Component {
     constructor(props) {

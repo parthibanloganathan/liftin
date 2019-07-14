@@ -1,7 +1,8 @@
 import React from 'react';
 import { AsyncStorage, ScrollView, StyleSheet, Switch, TextInput } from 'react-native';
 import * as defaultChart from './rpechart.json';
-import { AppLoading, LinearGradient } from 'expo';
+import { AppLoading } from 'expo';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Button, Divider, DropDownMenu, Heading, Icon, Text, View } from '@shoutem/ui';
 import { Surface } from 'react-native-paper';
 import { NavigationEvents } from 'react-navigation';

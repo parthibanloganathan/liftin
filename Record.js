@@ -1,8 +1,13 @@
 import React from 'react';
 import { AsyncStorage, Dimensions, ScrollView, StyleSheet } from 'react-native';
-import { AppLoading, LinearGradient } from 'expo';
+import { AppLoading } from 'expo';
+import * as Permissions from 'expo-permissions';
+import * as ImagePicker from 'expo-image-picker';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Button, DropDownMenu, Heading, Image, Text, View } from '@shoutem/ui';
-import { ImagePicker, Permissions } from 'expo';
+import * as Permissions from 'expo-permissions';
+import * as ImagePicker from 'expo-image-picker';
+import { LinearGradient } from 'expo-linear-gradient';
 import Toast from 'react-native-easy-toast'
 
 class Record extends React.Component {

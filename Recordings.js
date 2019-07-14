@@ -1,7 +1,8 @@
 import React from 'react';
 import { AsyncStorage, StyleSheet } from 'react-native';
 import { Button, Divider, Icon, ImageBackground, ListView, Screen, Subtitle, Text, Tile, Title, View } from '@shoutem/ui';
-import { AppLoading, LinearGradient } from 'expo';
+import { AppLoading } from 'expo';
+import { LinearGradient } from 'expo-linear-gradient';
 import Toast from 'react-native-easy-toast'
 
 const dateFormat = require('dateformat');

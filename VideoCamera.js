@@ -1,5 +1,9 @@
 // Base copied from https://github.com/expo/camerja/blob/master/App.js
-import { Constants, Camera, FileSystem, Permissions, ScreenOrientation } from 'expo';
+import { ScreenOrientation } from 'expo';
+import * as Permissions from 'expo-permissions';
+import * as FileSystem from 'expo-file-system';
+import { Camera } from 'expo-camera';
+import Constants from 'expo-constants';
 import React from 'react';
 import {
     StyleSheet,
