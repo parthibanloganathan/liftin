@@ -11,7 +11,7 @@
     "@shoutem/ui": "^0.23.20",
     "dateformat": "^3.0.3",
     "expo": "^33.0.0",
-    "expo-linear-gradient": "^4.0.0",
+    "expo-linear-gradient": "^5.0.1",
     "react": "16.8.3",
     "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
     "react-native-easy-toast": "^1.2.0",

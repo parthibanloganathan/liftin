@@ -4,10 +4,7 @@ import { AppLoading } from 'expo';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Button, DropDownMenu, Heading, Image, Text, View } from '@shoutem/ui';
-import * as Permissions from 'expo-permissions';
-import * as ImagePicker from 'expo-image-picker';
-import { LinearGradient } from 'expo-linear-gradient';
+import { Button, DropDownMenu, Heading, Text, View } from '@shoutem/ui';
 import Toast from 'react-native-easy-toast'
 
 class Record extends React.Component {
